@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Projektni2019_BNFParser
 {
@@ -8,17 +7,11 @@ namespace Projektni2019_BNFParser
     {
 
         public List<BNFToken> Tokens { get; private set; }
+
         public string Name { get; private set; }
+
         public Production(List<BNFToken> tokens, string name) =>
             (Tokens, Name) = (tokens != null ? tokens : new List<BNFToken>(), name);
-
-        public int IndexOf(string name)
-        {
-            for (int i = 0; i < Tokens.Count; i++)
-                if (Tokens[i].Name.Equals(name))
-                    return i;
-            return -1;
-        }
 
         public override int GetHashCode()
         {
@@ -26,7 +19,7 @@ namespace Projektni2019_BNFParser
         }
         public override bool Equals(object obj)
         {
-            if (obj==null || this.GetType()!=obj.GetType())
+            if (obj == null || this.GetType() != obj.GetType())
                 return false;
             else
             {
@@ -43,21 +36,7 @@ namespace Projektni2019_BNFParser
 
         public Production(string name) : this(null, name) { }
 
-        public bool ContainsTokenNamed(string name) => Tokens.Any(tok => !tok.Terminal && tok.Name.Equals(name));
-
         public void AddToken(BNFToken token) => Tokens.Add(token);
-        
-
-        public MatchInfo IsMatch(string str)
-        {
-            int fullLength = str.Length;
-            MatchInfo match = new MatchInfo(true, 0, false, null, null);
-            foreach (BNFToken token in Tokens)
-            {
-                Match singleMatch = token.IsMatch(str);
-            }
-            return match;
-        }
 
         public override string ToString()
         {

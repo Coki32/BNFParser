@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Projektni2019_BNFParser
 {
@@ -33,13 +29,13 @@ namespace Projektni2019_BNFParser
             else
             {
                 BNFToken other = obj as BNFToken;
-                return Terminal == other.Terminal && (!Terminal ? (Name.Equals(other.Name)) : Expression.Equals(other.Expression)); 
+                return Terminal == other.Terminal && (!Terminal ? (Name.Equals(other.Name)) : Expression.Equals(other.Expression));
             }
         }
 
         public override int GetHashCode()
         {
-            return Terminal.GetHashCode() + Name.GetHashCode() * 17 + (Terminal? Expression.GetHashCode() * 31 : 0);
+            return Terminal.GetHashCode() + Name.GetHashCode() * 17 + (Terminal ? Expression.GetHashCode() * 31 : 0);
         }
 
         private string EscapeSpecials(string str)
@@ -57,11 +53,9 @@ namespace Projektni2019_BNFParser
         public Match IsMatch(string str)
         {
             if (Terminal)
-            {
                 return Expression.Match(str);
-            }
             else//Ovo ne bi trebalo ni da se desi nikad
-                return Match.Empty;
+                throw new InvalidOperationException("Ne mozes matchirati neterminalni token ovako, bug....");
         }
 
     }

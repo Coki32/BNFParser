@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Projektni2019_BNFParser
 {
@@ -13,7 +9,7 @@ namespace Projektni2019_BNFParser
             string[] rules =
             {
                 "<S> ::= <Ime> <RAZMAK> <Prezime> | <S> <RAZMAK> <Prezime>",
-                "<Ime> ::= \"Marko\" | \"Darko\" | \"Zarko\"", 
+                "<Ime> ::= \"Marko\" | \"Darko\" | \"Zarko\"",
                 "<Prezime> ::= \"Jovic\" | \"Markovic\" | \"Zdravkovic\"",
                 "<RAZMAK> ::= \" \""
             };
@@ -26,7 +22,7 @@ namespace Projektni2019_BNFParser
                 "Darko Markovic Jovic",
                 "Darko Marko Jovic Zarko"
             };
-            foreach(string test in tests)
+            foreach (string test in tests)
             {
                 ruleset.Parse(test);
                 Console.WriteLine("------------------------------------");

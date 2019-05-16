@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Projektni2019_BNFParser
+﻿namespace Projektni2019_BNFParser
 {
     /**
      * Item za ono stanje, prati sljedece:

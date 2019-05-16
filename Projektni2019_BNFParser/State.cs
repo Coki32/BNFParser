@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Projektni2019_BNFParser
+﻿namespace Projektni2019_BNFParser
 {
     /**
      * Bukvalno Earley stanje, ono koje se salta dok parsira
@@ -48,8 +42,7 @@ namespace Projektni2019_BNFParser
         public bool Finished() => DotPosition == Production.Tokens.Count;
 
         public override string ToString() => Production.ToString() + " (" + InputPosition + ") @ " + DotPosition;
-        public void MoveRight() => DotPosition++;
         public BNFToken NextElement() => Production.Tokens[DotPosition];
-       
+
     }
 }

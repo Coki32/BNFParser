@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
 
 namespace Projektni2019_BNFParser
 {
     class BNFRuleset
     {
-        private XmlDocument XmlDoc;
         public List<Production> Productions { get; private set; }
 
         public BNFRuleset(string[] lines)
@@ -55,8 +53,6 @@ namespace Projektni2019_BNFParser
             var pocetna = Productions.Where(p => p.Name.Equals(Productions[0].Name)).Select(p => new State(p, 0, 0));
             foreach (State s in pocetna)
                 S[0].Add(s);
-            XmlDoc = new XmlDocument();
-            XmlElement root = XmlDoc.CreateElement(S[0].ElementAt(0).Production.Name);
 
             for (int k = 0; k <= str.Length; k++)
             {
@@ -100,11 +96,6 @@ namespace Projektni2019_BNFParser
                 int startingPosition = longestState.InputPosition;
                 Console.WriteLine($"Duzina:{longestMatch}");
                 Console.WriteLine($"Token: {longestState.Production.Name}\n\n");//Nije null, null je ako ne nadje
-                if (longestState.Production.Name.Equals(Productions[0].Name))
-                {
-                    XmlDoc.AppendChild(root);
-                    XmlDoc.Save(DateTime.Now.Millisecond + ".xml");
-                }
             }
             else
                 Console.WriteLine("Nema nista...\n\n");
