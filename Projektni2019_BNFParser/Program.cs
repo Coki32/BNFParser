@@ -20,7 +20,7 @@ namespace Projektni2019_BNFParser
                 "Marko Markovic",
                 "Darko Jovic",
                 "Darko Markovic Jovic",
-                "Darko Marko Jovic Zarko"
+                "Darko Marko Markovic Zarko"
             };
             foreach (string test in tests)
             {

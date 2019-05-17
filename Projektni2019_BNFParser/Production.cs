@@ -10,6 +10,8 @@ namespace Projektni2019_BNFParser
 
         public string Name { get; private set; }
 
+        
+
         public Production(List<BNFToken> tokens, string name) =>
             (Tokens, Name) = (tokens != null ? tokens : new List<BNFToken>(), name);
 

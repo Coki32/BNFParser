@@ -1,4 +1,6 @@
-﻿namespace Projektni2019_BNFParser
+﻿using System.Collections.Generic;
+
+namespace Projektni2019_BNFParser
 {
     /**
      * Bukvalno Earley stanje, ono koje se salta dok parsira
@@ -14,9 +16,8 @@
         public Production Production { get; private set; }
         public int DotPosition { get; private set; }
         public int InputPosition { get; private set; }
-
         public State ParentState { get; private set; }
-
+    
         public override int GetHashCode()
         {
             return Production.GetHashCode() + DotPosition.GetHashCode() * 17 + InputPosition.GetHashCode() * 31;
