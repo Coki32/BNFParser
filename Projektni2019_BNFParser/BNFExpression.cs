@@ -11,12 +11,14 @@ namespace Projektni2019_BNFParser
         private static readonly string terminalString = "\"(.*?)\"";
         private static readonly string operatorOrString = "\\|";
         private static readonly string operatorAssignString = "::=";
+        private static readonly string regexTokenString = "regex\\((.*)\\)";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
         private static readonly Regex terminalRegex = new Regex(terminalString, RegexOptions.Compiled);
         private static readonly Regex operatorOrRegex = new Regex(operatorOrString, RegexOptions.Compiled);
         private static readonly Regex operatorAssignRegex = new Regex(operatorAssignString, RegexOptions.Compiled);
+        private static readonly Regex regexTokenRegex = new Regex(regexTokenString, RegexOptions.Compiled);
 
         private BNFExpression(Production production, string name)
         {
@@ -42,6 +44,7 @@ namespace Projektni2019_BNFParser
             List<Production> Patterns = new List<Production>();
             Production currentPattern = new Production(Name);
             line = line.Substring(assignmentMatch.Length).Trim();
+
             while (line.Length > 0)
             {
                 Match rhsMatch = tokenRegex.Match(line);
@@ -61,7 +64,14 @@ namespace Projektni2019_BNFParser
                             currentPattern = new Production(Name);
                         }
                         else
-                            throw new ArgumentException("Nepoznat token u izrazu!");
+                        {
+                            rhsMatch = regexTokenRegex.Match(line);
+                            if (rhsMatch.Success && rhsMatch.Index == 0)
+                                currentPattern.AddToken(new BNFToken(true, "", rhsMatch.Groups[1].Value,false));
+                            else
+                                throw new ArgumentException("Nepoznat token u izrazu!");
+
+                        }
                     }
                 }
                 line = line.Substring(rhsMatch.Length).Trim();

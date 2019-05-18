@@ -4,23 +4,18 @@ namespace Projektni2019_BNFParser
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             string[] rules =
             {
-                "<S> ::= <Ime> <RAZMAK> <Prezime> | <S> <RAZMAK> <Prezime>",
-                "<Ime> ::= \"Marko\" | \"Darko\" | \"Zarko\"",
-                "<Prezime> ::= \"Jovic\" | \"Markovic\" | \"Zdravkovic\"",
-                "<RAZMAK> ::= \" \""
+                "<S> ::= regex(\\d{3}-[A-Z]{5})"
             };
             BNFRuleset ruleset = new BNFRuleset(rules);
             string[] tests =
             {
-                "Marko Markovic Markovic Jovic",
-                "Marko Markovic",
-                "Darko Jovic",
-                "Darko Markovic Jovic",
-                "Darko Marko Markovic Zarko"
+                "marko",
+                "dArko",
+                "065-MARKO"
             };
             foreach (string test in tests)
             {
@@ -28,7 +23,7 @@ namespace Projektni2019_BNFParser
                 Console.WriteLine("------------------------------------");
             }
         }
-        static void Mai2n(string[] args)
+        static void Main(string[] args)
         {
             string[] rules =
             {

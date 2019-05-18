@@ -12,15 +12,17 @@ namespace Projektni2019_BNFParser
 
         public Regex Expression { get; private set; }
 
-        public BNFToken(bool Terminal, string Name, string regex)
+        public BNFToken(bool Terminal, string Name, string regex, bool shouldEscape)
         {
             this.Name = Name;
             this.Terminal = Terminal;
             if (Terminal)
-                Expression = new Regex(EscapeSpecials(regex), RegexOptions.Compiled);
+                Expression = new Regex(shouldEscape ? EscapeSpecials(regex) : regex, RegexOptions.Compiled);
             else
                 Expression = null;
         }
+
+        public BNFToken(bool Terminal, string Name, string regex) : this(Terminal, Name, regex,true) { }
 
         public override bool Equals(object obj)
         {
