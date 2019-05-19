@@ -1,4 +1,5 @@
-<S> ::= "dr " <ime> <r> <prez> | <S> <r> <prez> " fancy"
-<ime> ::= regex([A-Z][a-z]+)
+<doktor> ::= "dr " <Ime> " " <Prezime> | <doktor> <minus> <Prezime>
+<Ime> ::= "Stefan" | "Ivan"
+<minus> ::= "-"
 <r> ::= " "
-<prez> ::= regex([A-Z][a-z]+)
+<Prezime> ::= "Markovic" | "Stefanovic" | "Ivanovic"

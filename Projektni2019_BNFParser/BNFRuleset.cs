@@ -68,7 +68,7 @@ namespace Projektni2019_BNFParser
             for (int nState = 0; nState < S[str.Length].Count; nState++)
             {
                 State nth = S[str.Length].ElementAt(nState);
-                if (nth.Finished())
+                if (nth.Finished() && nth.Production.Name.Equals(S[0].ElementAt(0).Production.Name))
                 {
                     int matchLength = str.Length - nth.InputPosition;
                     if (matchLength > longestMatch)
@@ -79,14 +79,10 @@ namespace Projektni2019_BNFParser
                 }
             }
             Console.WriteLine($"String: {str} Length={str.Length}");
-            if(str.Equals("dr Marko Markovic Zarkovic") && longestMatch==0)
-            {
-                Console.WriteLine("Evo desilo se....");
-            }
             if (longestMatch > 0)
             {
                 int last = str.Length;
-                Console.WriteLine($"{str} JESTE MATCH");
+                Console.WriteLine($"{str} JESTE MATCH (do {longestMatch})");
                 root = longestState.MuhTree.ToXml(xmlDocument);
                 xmlDocument.AppendChild(root);
                 xmlDocument.Save((++c) + ".xml");

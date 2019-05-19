@@ -8,7 +8,6 @@ namespace Projektni2019_BNFParser
 
         static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")" };
 
-
         public bool Terminal { get; private set; }
 
         //Ako je neterminalni imace ime
@@ -27,6 +26,8 @@ namespace Projektni2019_BNFParser
         }
 
         public BNFToken(bool Terminal, string Name, string regex) : this(Terminal, Name, regex,true) { }
+
+
 
         public override bool Equals(object obj)
         {
@@ -64,4 +65,15 @@ namespace Projektni2019_BNFParser
         }
 
     }
+
+    //class CityToken : BNFToken
+    //{
+    //    public CityToken() : base(true, "veliki_grad", null) { }
+
+    //    public override bool Equals(object obj)
+    //    {
+    //        return (obj is CityToken);//svi su isti svakako
+    //    }
+
+    //}
 }
