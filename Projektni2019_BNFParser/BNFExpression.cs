@@ -48,7 +48,7 @@ namespace Projektni2019_BNFParser
             while (line.Length > 0)
             {
                 Match rhsMatch = tokenRegex.Match(line);
-                if (rhsMatch.Success && rhsMatch.Index == 0)//znaci da je token na redu prvi
+                if (rhsMatch.Success && rhsMatch.Index == 0)
                     currentPattern.AddToken(new BNFToken(false, rhsMatch.Groups[1].Value, null));
                 else
                 {
@@ -65,9 +65,11 @@ namespace Projektni2019_BNFParser
                         }
                         else
                         {
+                            //Ovo su oni ::= regex(...)
                             rhsMatch = regexTokenRegex.Match(line);
                             if (rhsMatch.Success && rhsMatch.Index == 0)
                                 currentPattern.AddToken(new BNFToken(true, "", rhsMatch.Groups[1].Value,false));
+                            
                             else
                                 throw new ArgumentException("Nepoznat token u izrazu!");
 

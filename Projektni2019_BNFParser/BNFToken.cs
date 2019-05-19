@@ -5,6 +5,10 @@ namespace Projektni2019_BNFParser
 {
     class BNFToken
     {
+
+        static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")" };
+
+
         public bool Terminal { get; private set; }
 
         //Ako je neterminalni imace ime
@@ -42,7 +46,6 @@ namespace Projektni2019_BNFParser
 
         private string EscapeSpecials(string str)
         {
-            string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")" };
             foreach (string special in specials)
                 str = str.Replace(special, "\\" + special);
             return str;
