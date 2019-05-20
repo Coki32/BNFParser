@@ -1,5 +1,0 @@
-<doktor> ::= "dr " <Ime> " " <Prezime> | <doktor> <minus> <Prezime>
-<Ime> ::= "Stefan" | "Ivan"
-<minus> ::= "-"
-<r> ::= " "
-<Prezime> ::= "Markovic" | "Stefanovic" | "Ivanovic"

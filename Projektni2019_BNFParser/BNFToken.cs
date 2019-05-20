@@ -105,10 +105,10 @@ namespace Projektni2019_BNFParser
 
         public override Match IsMatch(string str)
         {
-            foreach (var token in StaticTokens.Tokens)
-                if (token.IsMatch(str).Success)
-                    return token.IsMatch(str);
-            return Match.Empty;
+            var matches = StaticTokens.Tokens.Select(t => t.IsMatch(str)).Where(m => m.Success && m.Index == 0);
+            if (matches.Count() > 1)
+                throw new InvalidOperationException("Bukvalno kaze da su se dva grada matchirala na nuli, nemoguce...");
+            return matches.ElementAt(0);
         }
     }
 }

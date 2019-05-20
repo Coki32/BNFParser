@@ -101,7 +101,7 @@ namespace Projektni2019_BNFParser
                 //adding.MuhTree.Root.AddChild(s.MuhTree.Root);
                 adding.MuhTree.Root.AddChildren(s.MuhTree.Root.Children);
                 adding.MuhTree.Root.AddChild(state.MuhTree.Root);
-#if DEBUG1
+#if SpammyOutput
                 Console.WriteLine($"COMPLETER Zavrsio: {adding}");
 #endif
                 states[k].Add(adding);
@@ -115,7 +115,7 @@ namespace Projektni2019_BNFParser
             foreach (Production by in Productions.Where(prod => prod.Name.Equals(state.NextElement().Name) && prod != state.Production))
             {
                 State adding = new State(by, 0, k);
-#if DEBUG1
+#if SpammyOutput
                 Console.WriteLine($"PREDICTOR Predvidio: {adding}");
 #endif
                 Sk.Add(adding);
@@ -133,13 +133,17 @@ namespace Projektni2019_BNFParser
                     adding.MuhTree.Root.Value = match.Groups[0].Value;
                 else
                 {
-                    //Inace ako nije jedini onda mora napraviti <literal> tag
+                    //Inace ako nije jedini onda kopiraj ostalu djecu
                     adding.MuhTree.Root.AddChildren(state.MuhTree.Root.Children);
+                    //napravi <literal> tag
                     var node = adding.MuhTree.AddScannedChild(match.Groups[0].Value);
+                    //Ako je veliki grad necu da tag bude <literal> pa ako jeste veliki grad to mu bude tag
+                    //Ako je regex(...) u sred izraza mozda ostavim <literal> jer ima istu ulogu
+                    //URL ce imati svoj token, 
                     if (adding.Production.Tokens[adding.DotPosition - 1] is CityToken)
                         node.Name = "veliki_grad";
                 }
-#if DEBUG1
+#if SpammyOutput
                 Console.WriteLine($"SCANNER Procitao: {adding}");
 #endif
                 S[k + match.Length].Add(adding);
