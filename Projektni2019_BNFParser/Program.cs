@@ -7,7 +7,7 @@ namespace Projektni2019_BNFParser
 {
     class Program
     {
-        static void Main2(string[] args)
+        static void Main(string[] args)
         {
 
             string[] rules = File.ReadLines("./config/config.bnf").ToArray();
@@ -19,7 +19,7 @@ namespace Projektni2019_BNFParser
                 ruleset.Parse(test);
             }
         }
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             string[] rules =
             {
