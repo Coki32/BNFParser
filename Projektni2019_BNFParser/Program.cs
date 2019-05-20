@@ -1,22 +1,25 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
+
 namespace Projektni2019_BNFParser
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
 
             string[] rules = File.ReadLines("./config/config.bnf").ToArray();
             BNFRuleset ruleset = new BNFRuleset(rules);
             string[] tests = File.ReadAllLines("./test/lines.txt");
+            StringBuilder sb = new StringBuilder();
             foreach (string test in tests)
             {
                 ruleset.Parse(test);
             }
         }
-        static void Main2(string[] args)
+        static void Main(string[] args)
         {
             string[] rules =
             {

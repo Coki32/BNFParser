@@ -1,4 +1,1 @@
-<S> ::= "dr " <ime> <r> <prez> | <S> <r> <prez> " fancy"
-<ime> ::= regex([A-Z][a-z]+)
-<r> ::= " "
-<prez> ::= regex([A-Z][a-z]+)
+<grad> ::= veliki_grad | <grad> " " veliki_grad

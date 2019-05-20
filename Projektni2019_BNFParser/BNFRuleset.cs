@@ -78,7 +78,7 @@ namespace Projektni2019_BNFParser
                     }
                 }
             }
-            Console.WriteLine($"String: {str} Length={str.Length}");
+            //Console.WriteLine($"String: {str} Length={str.Length}");
             if (longestMatch > 0)
             {
                 int last = str.Length;
@@ -135,7 +135,9 @@ namespace Projektni2019_BNFParser
                 {
                     //Inace ako nije jedini onda mora napraviti <literal> tag
                     adding.MuhTree.Root.AddChildren(state.MuhTree.Root.Children);
-                    adding.MuhTree.AddScannedChild(match.Groups[0].Value);
+                    var node = adding.MuhTree.AddScannedChild(match.Groups[0].Value);
+                    if (adding.Production.Tokens[adding.DotPosition - 1] is CityToken)
+                        node.Name = "veliki_grad";
                 }
 #if DEBUG1
                 Console.WriteLine($"SCANNER Procitao: {adding}");

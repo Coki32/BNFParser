@@ -12,6 +12,7 @@ namespace Projektni2019_BNFParser
         private static readonly string operatorOrString = "\\|";
         private static readonly string operatorAssignString = "::=";
         private static readonly string regexTokenString = "regex\\((.*)\\)";
+        private static readonly string velikiGradString = "veliki_grad";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
@@ -19,6 +20,7 @@ namespace Projektni2019_BNFParser
         private static readonly Regex operatorOrRegex = new Regex(operatorOrString, RegexOptions.Compiled);
         private static readonly Regex operatorAssignRegex = new Regex(operatorAssignString, RegexOptions.Compiled);
         private static readonly Regex regexTokenRegex = new Regex(regexTokenString, RegexOptions.Compiled);
+        private static readonly Regex velikiGradRegex = new Regex(velikiGradString, RegexOptions.Compiled);
 
         private BNFExpression(Production production, string name)
         {
@@ -69,9 +71,14 @@ namespace Projektni2019_BNFParser
                             rhsMatch = regexTokenRegex.Match(line);
                             if (rhsMatch.Success && rhsMatch.Index == 0)
                                 currentPattern.AddToken(new BNFToken(true, "", rhsMatch.Groups[1].Value,false));
-                            
                             else
-                                throw new ArgumentException("Nepoznat token u izrazu!");
+                            {
+                                rhsMatch = velikiGradRegex.Match(line);
+                                if (rhsMatch.Success && rhsMatch.Index == 0)
+                                    currentPattern.AddToken(new CityToken());
+                                else
+                                    throw new ArgumentException("Nepoznat token u izrazu!");
+                            }
 
                         }
                     }
