@@ -142,6 +142,8 @@ namespace Projektni2019_BNFParser
                     //URL ce imati svoj token, 
                     if (adding.Production.Tokens[adding.DotPosition - 1] is CityToken)
                         node.Name = "veliki_grad";
+                    if (adding.Production.Tokens[adding.DotPosition - 1] is PhoneToken)
+                        node.Name = "broj_telefona";
                 }
 #if SpammyOutput
                 Console.WriteLine($"SCANNER Procitao: {adding}");

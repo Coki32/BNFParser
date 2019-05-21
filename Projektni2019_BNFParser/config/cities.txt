@@ -9,7 +9,6 @@ Leuven
 Mons
 Kortrijk
 Oostende
-Bulgaria
 Sofia
 Plovdiv
 Varna
@@ -28,7 +27,6 @@ Pazardzhik
 Blagoevgrad
 Veliko Tarnovo
 Vratsa
-Czech Republic
 Praha
 Brno
 Ostrava
@@ -47,7 +45,6 @@ Havírov
 Most
 Karviná
 Chomutov-Jirkov
-Denmark
 Křbenhavn
 Ĺrhus
 Odense
@@ -179,7 +176,6 @@ Wuppertal
 Jena
 Düren, Stadt
 Bocholt, Stadt
-Estonia
 Tallinn
 Tartu
 Narva
@@ -189,7 +185,6 @@ Cork
 Limerick
 Galway
 Waterford
-Greece
 Athina
 Athina (greater city)
 Thessaloniki
@@ -466,7 +461,6 @@ Osijek
 Split
 Pula - Pola
 Zadar
-Italy
 Roma
 Milano
 Milano (greater city)
@@ -561,15 +555,12 @@ Ragusa
 Andria
 Trani
 L'Aquila
-Cyprus
 Lefkosia
 Lemesos
-Latvia
 Riga
 Liepaja
 Jelgava
 Daugavpils
-Lithuania
 Vilnius
 Kaunas
 Panevezys
@@ -577,8 +568,6 @@ Alytus
 Klaipeda
 Siauliai
 Luxembourg (Grand Duchy)
-Luxembourg
-Hungary
 Budapest
 Miskolc
 Nyíregyháza
@@ -598,7 +587,6 @@ Eger
 Dunaújváros
 Zalaegerszeg
 Sopron
-Malta
 Valletta
 Greater 's-Gravenhage
 Greater Amsterdam
@@ -647,14 +635,12 @@ Assen
 Veenendaal
 Greater Heemskerk
 Greater Soest
-Austria
 Wien
 Graz
 Linz
 Salzburg
 Innsbruck
 Klagenfurt
-Poland
 Warszawa
 Lódz
 Kraków
@@ -751,7 +737,6 @@ Matosinhos
 Gondomar
 Guimarăes
 Vila Franca de Xira
-Romania
 Bucuresti
 Cluj-Napoca
 Timisoara
@@ -797,7 +782,6 @@ Presov
 Zilina
 Trnava
 Trencín
-Finland
 Helsinki / Helsingfors
 Helsinki / Helsingfors (greater city)
 Tampere / Tammerfors
@@ -808,7 +792,6 @@ Vantaa / Vanda
 Lahti / Lahtis
 Kuopio
 Jyväskylä
-Sweden
 Stockholm
 Stockholm (greater city)
 Göteborg
@@ -823,7 +806,6 @@ Norrköping
 Helsingborg
 Lund
 Borĺs
-United Kingdom
 London (greater city)
 Birmingham
 West Midlands urban area
@@ -1013,7 +995,6 @@ Kettering
 Inverclyde (Greenock)
 Renfrewshire (Paisley)
 Derry & Strabane Local Government District
-Turkey
 Ankara
 Adana
 Antalya

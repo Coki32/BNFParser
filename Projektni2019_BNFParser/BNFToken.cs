@@ -10,7 +10,6 @@ namespace Projektni2019_BNFParser
     {
 
         static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")" };
-
         public bool Terminal { get; private set; }
 
         //Ako je neterminalni imace ime
@@ -108,7 +107,19 @@ namespace Projektni2019_BNFParser
             var matches = StaticTokens.Tokens.Select(t => t.IsMatch(str)).Where(m => m.Success && m.Index == 0);
             if (matches.Count() > 1)
                 throw new InvalidOperationException("Bukvalno kaze da su se dva grada matchirala na nuli, nemoguce...");
-            return matches.ElementAt(0);
+            return matches.Count() > 0 ? matches.ElementAt(0) : Match.Empty;
+        }
+    }
+
+    class PhoneToken : BNFToken
+    {
+        //Valjda radi ovaj regex....
+        public PhoneToken() : base(true, "broj_telefona",
+            "(((\\+|00)?\\d{1,3})|((\\((\\+|00)?\\d{1,3})\\)))?([ \\\\\\/-]?)?((\\d{2,3})|(\\(\\d{2,3}\\)))([ \\\\\\/-]?)(\\d{3})([ \\\\\\/-]?)(\\d{3,4})", false) { }
+
+        public override string ToString()
+        {
+            return "broj_telefona";
         }
     }
 }
