@@ -125,6 +125,16 @@ namespace Projektni2019_BNFParser
         }
     }
 
+    class NumberToken : BnfToken
+    {
+        public NumberToken() : base(true, "brojevna_konstanta", "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?",false) { }
+
+        public override string ToString()
+        {
+            return "broj_telefona";
+        }
+    }
+
     class UrlToken : BnfToken
     {
         private readonly Regex expr = new Regex(".*", RegexOptions.Compiled);

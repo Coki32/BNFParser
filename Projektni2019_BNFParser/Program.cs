@@ -11,21 +11,21 @@ namespace Projektni2019_BNFParser
         static void Main(string[] args)
         {
 
-            UrlTest();
-            //int c = 1;
-            //string[] rules = File.ReadLines("./config/config.bnf").ToArray();
-            //BnfRuleset ruleset = new BnfRuleset(rules);
-            //string[] tests = File.ReadAllLines("./test/lines.txt");
-            //foreach (string test in tests)
-            //{
-            //    XmlElement root = ruleset.Parse(test, true);
-            //    if (root != null)
-            //    {
-            //        XmlDocument doc = root.OwnerDocument;
-            //        doc.AppendChild(root);
-            //        doc.Save(c++ + ".xml");
-            //    }
-            //}
+            //UrlTest();
+            int c = 1;
+            string[] rules = File.ReadLines("./config/config.bnf").ToArray();
+            BnfRuleset ruleset = new BnfRuleset(rules);
+            string[] tests = File.ReadAllLines("./test/lines.txt");
+            foreach (string test in tests)
+            {
+                XmlElement root = ruleset.Parse(test);
+                if (root != null)
+                {
+                    XmlDocument doc = root.OwnerDocument;
+                    doc.AppendChild(root);
+                    doc.Save(c++ + ".xml");
+                }
+            }
         }
 
         static void UrlTest()

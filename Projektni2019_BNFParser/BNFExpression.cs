@@ -15,6 +15,7 @@ namespace Projektni2019_BNFParser
         private static readonly string velikiGradString = "veliki_grad";
         private static readonly string brojTelefonaString = "broj_telefona";
         private static readonly string webLinkString = "web_link";
+        private static readonly string brojevnaKonstantaString = "brojevna_konstanta";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
@@ -25,6 +26,7 @@ namespace Projektni2019_BNFParser
         private static readonly Regex velikiGradRegex = new Regex(velikiGradString, RegexOptions.Compiled);
         private static readonly Regex brojTelefonaRegex = new Regex(brojTelefonaString, RegexOptions.Compiled);
         private static readonly Regex webLinkRegex = new Regex(webLinkString, RegexOptions.Compiled);
+        private static readonly Regex brojevnaKonstantaRegex = new Regex(brojevnaKonstantaString, RegexOptions.Compiled);
 
         private BnfExpression(Production production, string name)
         {
@@ -91,7 +93,13 @@ namespace Projektni2019_BNFParser
                                         if (rhsMatch.Success && rhsMatch.Index == 0)
                                             currentPattern.AddToken(new UrlToken());
                                         else
-                                            throw new ArgumentException("Nepoznat token u izrazu!");
+                                        {
+                                            rhsMatch = brojevnaKonstantaRegex.Match(line);
+                                            if (rhsMatch.Success && rhsMatch.Index == 0)
+                                                currentPattern.AddToken(new NumberToken());
+                                            else
+                                                throw new ArgumentException("Nepoznat token u izrazu!");
+                                        }
                                     }
 
                                 }
