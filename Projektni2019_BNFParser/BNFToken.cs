@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Xml;
 
 namespace Projektni2019_BNFParser
 {
-    class BNFToken
+    class BnfToken
     {
 
-        static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")" };
+        static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "<", ">" };
         public bool Terminal { get; private set; }
 
         //Ako je neterminalni imace ime
@@ -17,7 +18,7 @@ namespace Projektni2019_BNFParser
 
         public Regex Expression { get; private set; }
 
-        public BNFToken(bool Terminal, string Name, string regex, bool shouldEscape)
+        public BnfToken(bool Terminal, string Name, string regex, bool shouldEscape)
         {
             this.Name = Name;
             this.Terminal = Terminal;
@@ -27,7 +28,7 @@ namespace Projektni2019_BNFParser
                 Expression = null;
         }
 
-        public BNFToken(bool Terminal, string Name, string regex) : this(Terminal, Name, regex,true) { }
+        public BnfToken(bool Terminal, string Name, string regex) : this(Terminal, Name, regex,true) { }
 
 
 
@@ -37,7 +38,7 @@ namespace Projektni2019_BNFParser
                 return false;
             else
             {
-                BNFToken other = obj as BNFToken;
+                BnfToken other = obj as BnfToken;
                 return Terminal == other.Terminal && (!Terminal ? (Name.Equals(other.Name)) : Expression.Equals(other.Expression));
             }
         }
@@ -68,21 +69,22 @@ namespace Projektni2019_BNFParser
 
     }
 
-    static class StaticTokens
+    static class StaticItems
     {
-        public static List<BNFToken> Tokens = new List<BNFToken>();
+        public static List<BnfToken> Tokens = new List<BnfToken>();
+        public static BnfRuleset UrlRuleset = null;
     }
 
-    class CityToken : BNFToken
+    class CityToken : BnfToken
     {
         public CityToken() : base(true, "veliki_grad", "Ne moze biti null...",false)
         {
-            if (StaticTokens.Tokens.Count == 0)//Ako nisu do sad ucitani, ucitaj ih
+            if (StaticItems.Tokens.Count == 0)//Ako nisu do sad ucitani, ucitaj ih
             {
                 string[] cities = File.ReadAllText("./config/cities.txt").Split("\n".ToCharArray());
                 foreach(string city in cities)
                 {
-                    StaticTokens.Tokens.Add(new BNFToken(true, "veliki_grad", city,false));
+                    StaticItems.Tokens.Add(new BnfToken(true, "veliki_grad", city,false));
                 }
             }
         }
@@ -104,14 +106,14 @@ namespace Projektni2019_BNFParser
 
         public override Match IsMatch(string str)
         {
-            var matches = StaticTokens.Tokens.Select(t => t.IsMatch(str)).Where(m => m.Success && m.Index == 0);
+            var matches = StaticItems.Tokens.Select(t => t.IsMatch(str)).Where(m => m.Success && m.Index == 0);
             if (matches.Count() > 1)
                 throw new InvalidOperationException("Bukvalno kaze da su se dva grada matchirala na nuli, nemoguce...");
             return matches.Count() > 0 ? matches.ElementAt(0) : Match.Empty;
         }
     }
 
-    class PhoneToken : BNFToken
+    class PhoneToken : BnfToken
     {
         //Valjda radi ovaj regex....
         public PhoneToken() : base(true, "broj_telefona",
@@ -122,4 +124,29 @@ namespace Projektni2019_BNFParser
             return "broj_telefona";
         }
     }
+
+    class UrlToken : BnfToken
+    {
+        private readonly Regex expr = new Regex(".*", RegexOptions.Compiled);
+
+        public UrlToken() : base(true, "web_link", "web_link")
+        {
+            if (StaticItems.UrlRuleset == null)
+            {
+                StaticItems.UrlRuleset = new BnfRuleset(File.ReadAllLines("./config/UrlConfig.bnf"));
+            }
+        }
+
+        public override Match IsMatch(string str)
+        {
+            XmlElement root = StaticItems.UrlRuleset.Parse(str,false);
+            if (root == null)
+                return Match.Empty;
+            int length = int.Parse(root.GetAttribute("length"));
+            return expr.Match(str.Substring(0, length));
+        }
+
+
+    }
+
 }

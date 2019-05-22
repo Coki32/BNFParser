@@ -1,3 +1,1 @@
-<OsobaSaBrojem> ::= <Ime> " " <Pre> " - " broj_telefona
-<Ime> ::= regex([A-Z][a-z]{2,})
-<Pre> ::= regex([A-Z][a-z]{2,})
+<thing> ::= "URL: " web_link " je dobar link!"

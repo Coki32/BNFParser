@@ -6,14 +6,14 @@ namespace Projektni2019_BNFParser
     class Production
     {
 
-        public List<BNFToken> Tokens { get; private set; }
+        public List<BnfToken> Tokens { get; private set; }
 
         public string Name { get; private set; }
 
         
 
-        public Production(List<BNFToken> tokens, string name) =>
-            (Tokens, Name) = (tokens != null ? tokens : new List<BNFToken>(), name);
+        public Production(List<BnfToken> tokens, string name) =>
+            (Tokens, Name) = (tokens != null ? tokens : new List<BnfToken>(), name);
 
         public override int GetHashCode()
         {
@@ -38,7 +38,7 @@ namespace Projektni2019_BNFParser
 
         public Production(string name) : this(null, name) { }
 
-        public void AddToken(BNFToken token) => Tokens.Add(token);
+        public void AddToken(BnfToken token) => Tokens.Add(token);
 
         public override string ToString()
         {

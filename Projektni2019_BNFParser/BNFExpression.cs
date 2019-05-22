@@ -4,16 +4,17 @@ using System.Text.RegularExpressions;
 
 namespace Projektni2019_BNFParser
 {
-    class BNFExpression
+    class BnfExpression
     {
 
         private static readonly string tokenString = "<([\\w-]*)>";
         private static readonly string terminalString = "\"(.*?)\"";
         private static readonly string operatorOrString = "\\|";
         private static readonly string operatorAssignString = "::=";
-        private static readonly string regexTokenString = "regex\\((.*)\\)";
+        private static readonly string regexTokenString = "regex\\((.*?)\\)";
         private static readonly string velikiGradString = "veliki_grad";
         private static readonly string brojTelefonaString = "broj_telefona";
+        private static readonly string webLinkString = "web_link";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
@@ -23,8 +24,9 @@ namespace Projektni2019_BNFParser
         private static readonly Regex regexTokenRegex = new Regex(regexTokenString, RegexOptions.Compiled);
         private static readonly Regex velikiGradRegex = new Regex(velikiGradString, RegexOptions.Compiled);
         private static readonly Regex brojTelefonaRegex = new Regex(brojTelefonaString, RegexOptions.Compiled);
+        private static readonly Regex webLinkRegex = new Regex(webLinkString, RegexOptions.Compiled);
 
-        private BNFExpression(Production production, string name)
+        private BnfExpression(Production production, string name)
         {
             Production = production;
             Name = name;
@@ -33,7 +35,7 @@ namespace Projektni2019_BNFParser
         public string Name { get; private set; }
         public Production Production { get; private set; }
 
-        public static BNFExpression[] MakeExpressions(string line)
+        public static BnfExpression[] MakeExpressions(string line)
         {
 
             line = line.Trim();//ooodma skrati razmake
@@ -53,12 +55,12 @@ namespace Projektni2019_BNFParser
             {
                 Match rhsMatch = tokenRegex.Match(line);
                 if (rhsMatch.Success && rhsMatch.Index == 0)
-                    currentPattern.AddToken(new BNFToken(false, rhsMatch.Groups[1].Value, null));
+                    currentPattern.AddToken(new BnfToken(false, rhsMatch.Groups[1].Value, null));
                 else
                 {
                     rhsMatch = terminalRegex.Match(line);
                     if (rhsMatch.Success && rhsMatch.Index == 0)
-                        currentPattern.AddToken(new BNFToken(true, "", rhsMatch.Groups[1].Value));
+                        currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value));
                     else
                     {
                         rhsMatch = operatorOrRegex.Match(line);
@@ -72,7 +74,7 @@ namespace Projektni2019_BNFParser
                             //Ovo su oni ::= regex(...)
                             rhsMatch = regexTokenRegex.Match(line);
                             if (rhsMatch.Success && rhsMatch.Index == 0)
-                                currentPattern.AddToken(new BNFToken(true, "", rhsMatch.Groups[1].Value,false));
+                                currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value,false));
                             else
                             {
                                 rhsMatch = velikiGradRegex.Match(line);
@@ -84,7 +86,13 @@ namespace Projektni2019_BNFParser
                                     if (rhsMatch.Success && rhsMatch.Index == 0)
                                         currentPattern.AddToken(new PhoneToken());
                                     else
-                                        throw new ArgumentException("Nepoznat token u izrazu!");
+                                    {
+                                        rhsMatch = webLinkRegex.Match(line);
+                                        if (rhsMatch.Success && rhsMatch.Index == 0)
+                                            currentPattern.AddToken(new UrlToken());
+                                        else
+                                            throw new ArgumentException("Nepoznat token u izrazu!");
+                                    }
 
                                 }
                             }
@@ -98,9 +106,9 @@ namespace Projektni2019_BNFParser
             if (currentPattern.Tokens.Count > 0)
                 Patterns.Add(currentPattern);
 
-            BNFExpression[] split = new BNFExpression[Patterns.Count];
+            BnfExpression[] split = new BnfExpression[Patterns.Count];
             for (int i = 0; i < Patterns.Count; i++)
-                split[i] = new BNFExpression(Patterns[i], Name);
+                split[i] = new BnfExpression(Patterns[i], Name);
             return split;
         }
 

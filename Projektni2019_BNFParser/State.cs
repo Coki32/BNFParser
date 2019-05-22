@@ -44,7 +44,7 @@ namespace Projektni2019_BNFParser
         public bool Finished() => DotPosition == Production.Tokens.Count;
 
         public override string ToString() => Production.ToString() + " (" + InputPosition + ") @ " + DotPosition;
-        public BNFToken NextElement() => Production.Tokens[DotPosition];
+        public BnfToken NextElement() => Production.Tokens[DotPosition];
 
     }
 }
