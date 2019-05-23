@@ -30,7 +30,6 @@ namespace Projektni2019_BNFParser
             }
             var existingNames = Productions.Select(p => p.Name).Distinct();
             var requestedNames = Productions.Select(p => p.Tokens.Where(t => !t.Terminal).Select(t => t.Name)).Aggregate((e1, e2) => e1.Concat(e2)).Distinct();
-            //if(requestedNames.Any(s => !existingNames.Contains(s)))
             foreach (string requested in requestedNames) {
                 if (!existingNames.Contains(requested))
                     throw new ArgumentException($"U ulaznom fajlu ne postoji token <{requested}>!");
@@ -66,38 +65,26 @@ namespace Projektni2019_BNFParser
                         COMPLETER(state, k, S);
                 }
             }
-            (State longestState, int longestMatch) = FindLongestState(S[str.Length],str.Length,true,Productions[0].Name);
+            (State longestState, int longestMatch) = FindLongestStateInSet(S[str.Length],str.Length,true, !partials ,Productions[0].Name);
             if (partials && longestState == null)
             {
                 for(int i=str.Length; i>=0; i--)
                 {
-                    (State st, int len) next = FindLongestState(S[i], i, true, Productions[0].Name);
+                    (State st, int len) next = FindLongestStateInSet(S[i], i, true, !partials, Productions[0].Name);
                     if (next.len > longestMatch)
+                    {
                         (longestState, longestMatch) = next;
+                        if (longestMatch == i)
+                            break;
+                    }
                 }
             }
-            //for (int nState = 0; nState < S[str.Length].Count; nState++)
-            //{
-            //    State nth = S[str.Length].ElementAt(nState);
-            //    if (nth.Finished() && nth.Production.Name.Equals(S[0].ElementAt(0).Production.Name))
-            //    {
-            //        int matchLength = str.Length - nth.InputPosition;
-            //        if (matchLength > longestMatch)
-            //        {
-            //            longestMatch = matchLength;
-            //            longestState = nth;
-            //        }
-            //    }
-            //}
-            //Console.WriteLine($"String: {str} Length={str.Length}");
             if (longestMatch > 0)
             {
-                int last = str.Length;
-                Console.WriteLine($"{str} JESTE MATCH (do {longestMatch})");
                 root = longestState.MuhTree.ToXml(xmlDocument);
                 root.SetAttribute("length", longestMatch.ToString());
             }
-            else if (partials)
+            else
             {
 
             }
@@ -106,6 +93,8 @@ namespace Projektni2019_BNFParser
 
         private void COMPLETER(State state, int k, List<HashSet<State>> states)
         {
+            //Ovaj set StartedAt je izdvojen jer kad je produkcija duzine 0 onda je StartedAt == states[k]
+            //A ne da da se kolekcija mijenja dok kroz nju iterira foreach petlja
             HashSet<State> StartedAt = states.ElementAt(state.InputPosition).Where(st => !st.Finished() && st.NextElement().Name.Equals(state.Production.Name)).ToHashSet();
             foreach (State s in StartedAt)
             {
@@ -161,6 +150,8 @@ namespace Projektni2019_BNFParser
                         node.Name = "brojevna_konstanta";
                     else if (adding.Production.Tokens[adding.DotPosition - 1] is UrlToken)
                         node.Name = "web_link";
+                    else if (adding.Production.Tokens[adding.DotPosition - 1] is MailToken)
+                        node.Name = "mejl_adresa";
                 }
 #if SpammyOutput
                 Console.WriteLine($"SCANNER Procitao: {adding}");
@@ -169,12 +160,12 @@ namespace Projektni2019_BNFParser
             }
         }
 
-        private (State,int) FindLongestState(HashSet<State> states, int strlen, bool finalOnly, string startName)
+        private (State,int) FindLongestStateInSet(HashSet<State> states, int strlen, bool finalOnly, bool finishedOnly, string startName)
         {
             int longestLength = 0;
             State longest = null;
             foreach(State s in states)
-                if (s.Finished() && ( (finalOnly && s.Production.Name.Equals(startName)) || !finalOnly) )
+                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && ( (finalOnly && s.Production.Name.Equals(startName)) || !finalOnly) )
                 {
                     int matchLength = strlen - s.InputPosition;
                     if (matchLength > longestLength)

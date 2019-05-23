@@ -18,7 +18,7 @@ namespace Projektni2019_BNFParser
             string[] tests = File.ReadAllLines("./test/lines.txt");
             foreach (string test in tests)
             {
-                XmlElement root = ruleset.Parse(test,true);
+                XmlElement root = ruleset.Parse(test);
                 if (root != null)
                 {
                     XmlDocument doc = root.OwnerDocument;

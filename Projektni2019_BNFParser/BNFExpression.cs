@@ -16,6 +16,7 @@ namespace Projektni2019_BNFParser
         private static readonly string brojTelefonaString = "broj_telefona";
         private static readonly string webLinkString = "web_link";
         private static readonly string brojevnaKonstantaString = "brojevna_konstanta";
+        private static readonly string mejlAdresaString = "mejl_adresa";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
@@ -27,6 +28,7 @@ namespace Projektni2019_BNFParser
         private static readonly Regex brojTelefonaRegex = new Regex(brojTelefonaString, RegexOptions.Compiled);
         private static readonly Regex webLinkRegex = new Regex(webLinkString, RegexOptions.Compiled);
         private static readonly Regex brojevnaKonstantaRegex = new Regex(brojevnaKonstantaString, RegexOptions.Compiled);
+        private static readonly Regex mejlAdresaRegex = new Regex(mejlAdresaString, RegexOptions.Compiled);
 
         private BnfExpression(Production production, string name)
         {
@@ -98,7 +100,13 @@ namespace Projektni2019_BNFParser
                                             if (rhsMatch.Success && rhsMatch.Index == 0)
                                                 currentPattern.AddToken(new NumberToken());
                                             else
-                                                throw new ArgumentException("Nepoznat token u izrazu!");
+                                            {
+                                                rhsMatch = mejlAdresaRegex.Match(line);
+                                                if (rhsMatch.Success && rhsMatch.Index == 0)
+                                                    currentPattern.AddToken(new MailToken());
+                                                else
+                                                    throw new ArgumentException("Nepoznat token u izrazu!");
+                                            }
                                         }
                                     }
 

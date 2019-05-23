@@ -1,4 +1,4 @@
-<URL> ::= "http" <mozdaS> "://" <host> | <URL> <path> | <queryURL>
+<URL> ::= "http" <mozdaS> "://" <host> | <URL> <path> | <queryURL> | <URL> "/"
 <queryURL> ::= <URL> <path> <query> | <URL> "/" <query>
 <host> ::= <hostBlok> "." <hostBlok> | <host> "." <hostBlok>
 <hostBlok> ::= regex([A-Za-z_0-9]+)

@@ -72,7 +72,7 @@
   <ItemGroup>
     <Compile Include="BnfExpression.cs" />
     <Compile Include="Production.cs" />
-    <Compile Include="BNFRuleset.cs" />
+    <Compile Include="BnfRuleset.cs" />
     <Compile Include="BnfToken.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

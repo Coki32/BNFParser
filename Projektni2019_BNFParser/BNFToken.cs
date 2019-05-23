@@ -149,14 +149,17 @@ namespace Projektni2019_BNFParser
 
         public override Match IsMatch(string str)
         {
-            XmlElement root = StaticItems.UrlRuleset.Parse(str,true);
+            XmlElement root = StaticItems.UrlRuleset.Parse(str, true);
             if (root == null)
                 return Match.Empty;
             int length = int.Parse(root.GetAttribute("length"));
             return expr.Match(str.Substring(0, length));
         }
+    }
 
-
+    class MailToken : BnfToken
+    {
+        public MailToken() : base(true, "mejl_adresa", "[a-zA-Z0-9.!#$%&’*+\\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*", false) { }
     }
 
 }

@@ -1,1 +1,2 @@
-<match> ::= web_link
+<match> ::= web_link " " mejl_adresa " " <password>
+<password>::=regex([a-zA-Z0-9!@#$%^&*(]{6,})
