@@ -65,10 +65,16 @@ namespace Projektni2019_BNFParser
                         COMPLETER(state, k, S);
                 }
             }
+#if DEBUG
+            int[] setCounts = S.Select(set => set.Count).ToArray();
+            int total = setCounts.Sum();
+            Console.WriteLine($"[{setCounts.Select(br => br.ToString()).Aggregate((s1,s2)=>s1+", "+s2)}]" +
+                $"total: {total}");
+#endif
             (State longestState, int longestMatch) = FindLongestStateInSet(S[str.Length],str.Length,true, !partials ,Productions[0].Name);
             if (partials && longestState == null)
             {
-                for(int i=str.Length; i>=0; i--)
+                for(int i=str.Length-1; i>=0; i--)
                 {
                     (State st, int len) next = FindLongestStateInSet(S[i], i, true, !partials, Productions[0].Name);
                     if (next.len > longestMatch)
@@ -164,8 +170,8 @@ namespace Projektni2019_BNFParser
         {
             int longestLength = 0;
             State longest = null;
-            foreach(State s in states)
-                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && ( (finalOnly && s.Production.Name.Equals(startName)) || !finalOnly) )
+            foreach (State s in states)
+                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && ((finalOnly && s.Production.Name.Equals(startName)) || !finalOnly))
                 {
                     int matchLength = strlen - s.InputPosition;
                     if (matchLength > longestLength)
