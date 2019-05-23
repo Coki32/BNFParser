@@ -157,6 +157,8 @@ namespace Projektni2019_BNFParser
                         node.Name = "veliki_grad";
                     if (adding.Production.Tokens[adding.DotPosition - 1] is PhoneToken)
                         node.Name = "broj_telefona";
+                    if (adding.Production.Tokens[adding.DotPosition - 1] is NumberToken)
+                        node.Name = "brojevna_konstanta";
                 }
 #if SpammyOutput
                 Console.WriteLine($"SCANNER Procitao: {adding}");

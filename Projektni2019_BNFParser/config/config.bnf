@@ -1,2 +1,1 @@
-<match> ::= <tekst> brojevna_konstanta <tekst>
-<tekst> ::= regex([a-zA-Z ]*)
+<match> ::= "URL: " web_link " je dobar URL!"

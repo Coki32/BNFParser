@@ -1,21 +1,12 @@
-<URI> ::= <scheme> ":" <authority> <path> <queryUp>
-<scheme> ::= "http" | "https" | "ftp" | "mailto" | "file" | "data" | "irc"
-<authority> ::= "//" <mozdaUser> <host> <mozdaPort>
-<queryUp> ::= <query> | ""
-<mozdaUser> ::= "" | <userinfo> "@"
-<mozdaPort> ::= "" | ":" <port>
-<userinfo> ::= <username> ":" <password>
-<username> ::= regex(\w+)
-<password> ::= regex(\w+)
-<host> ::= regex(\w+) "." | <host> "." regex(\w+)
-<port> ::= ":" regex(\d{1,})
-<path> ::= <validPathSymbols> | <path> "/" <path>
-<validPathSymbols> ::= <validPathSymbolsSub> | <validPathSymbols> <validPathSymbolsSub>
-<validPathSymbolsSub> ::= regex([a-zA-Z0-9$_@.&+\-!*"',]+) | "(" | ")"  | "%" <hex> <hex>
-<tackaSlash> ::= "/" | "."
-<hex> ::= regex([0-9a-fA-F]+)
-<mozdaTekst> ::= regex(\w+) | ""
-<mozdaSlash> ::= "" | "/" | "."
-<keyValuePair> ::= regex(\w+) "=" regex(\w+)
-<qDelim> ::= "&" | ";"
-<query> ::= "?" <keyValuePair> | <query> <qDelim> <keyValuePair>
+<URL> ::= "http" <mozdaS> "://" <host> | <URL> <path> | <queryURL>
+<queryURL> ::= <URL> <path> <query>
+<host> ::= <hostBlok> "." <hostBlok> | <host> "." <hostBlok>
+<hostBlok> ::= regex([A-Za-z_0-9]+)
+<mozdaS> ::= "s" | ""
+<path> ::= "/" <pathBlok> | <path> "/" <pathBlok>
+<pathBlok> ::= regex([a-zA-Z_\-0-9.]+) | <pathBlok> <hex> | <pathBlok> <hex> <pathBlok>
+<hex> ::= regex(%[0-9A-Fa-f]{2})
+<query> ::= "?" <KVPair> | <query> "&" <KVPair>
+<KVPair> ::= <key> | <key> "=" <value>
+<key> ::= regex([a-zA-Z0-9_]+)
+<value> ::= regex([a-zA-Z0-9_\-]+)
