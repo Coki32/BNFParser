@@ -71,7 +71,7 @@ namespace Projektni2019_BNFParser
             {
                 for(int i=str.Length; i>=0; i--)
                 {
-                    (State st, int len) next = FindLongestState(S[i], str.Length, false, null);
+                    (State st, int len) next = FindLongestState(S[i], i, true, Productions[0].Name);
                     if (next.len > longestMatch)
                         (longestState, longestMatch) = next;
                 }
@@ -155,10 +155,12 @@ namespace Projektni2019_BNFParser
                     //URL ce imati svoj token, 
                     if (adding.Production.Tokens[adding.DotPosition - 1] is CityToken)
                         node.Name = "veliki_grad";
-                    if (adding.Production.Tokens[adding.DotPosition - 1] is PhoneToken)
+                    else if (adding.Production.Tokens[adding.DotPosition - 1] is PhoneToken)
                         node.Name = "broj_telefona";
-                    if (adding.Production.Tokens[adding.DotPosition - 1] is NumberToken)
+                    else if (adding.Production.Tokens[adding.DotPosition - 1] is NumberToken)
                         node.Name = "brojevna_konstanta";
+                    else if (adding.Production.Tokens[adding.DotPosition - 1] is UrlToken)
+                        node.Name = "web_link";
                 }
 #if SpammyOutput
                 Console.WriteLine($"SCANNER Procitao: {adding}");

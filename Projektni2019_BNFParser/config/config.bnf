@@ -1,1 +1,1 @@
-<match> ::= "URL: " web_link " je dobar URL!"
+<match> ::= web_link
