@@ -10,6 +10,8 @@ namespace Projektni2019_BNFParser
     {
         public List<Production> Productions { get; private set; }
 
+        public Production StartingProduction { get { return Productions[0]; } }
+
         public BnfRuleset(string[] lines)
         {
             Productions = new List<Production>();
@@ -36,11 +38,11 @@ namespace Projektni2019_BNFParser
             }
         }
 
-        public XmlElement Parse(string str)
+        public (XmlElement, State) Parse(string str)
         {
             return Parse(str, false);
         }
-        public XmlElement Parse(string str, bool partials)
+        public (XmlElement, State) Parse(string str, bool partials)
         {
             List<HashSet<State>> S = new List<HashSet<State>>();
             for (int i = 0; i <= str.Length; i++)
@@ -65,18 +67,18 @@ namespace Projektni2019_BNFParser
                         COMPLETER(state, k, S);
                 }
             }
-#if DEBUG
+#if SpammyOutput
             int[] setCounts = S.Select(set => set.Count).ToArray();
             int total = setCounts.Sum();
             Console.WriteLine($"[{setCounts.Select(br => br.ToString()).Aggregate((s1,s2)=>s1+", "+s2)}]" +
                 $"total: {total}");
 #endif
-            (State longestState, int longestMatch) = FindLongestStateInSet(S[str.Length],str.Length,true, !partials ,Productions[0].Name);
+            (State longestState, int longestMatch) = FindLongestStateInSet(S[str.Length],str.Length, !partials);
             if (partials && longestState == null)
             {
                 for(int i=str.Length-1; i>=0; i--)
                 {
-                    (State st, int len) next = FindLongestStateInSet(S[i], i, true, !partials, Productions[0].Name);
+                    (State st, int len) next = FindLongestStateInSet(S[i], i, !partials);
                     if (next.len > longestMatch)
                     {
                         (longestState, longestMatch) = next;
@@ -85,7 +87,7 @@ namespace Projektni2019_BNFParser
                     }
                 }
             }
-            if (longestMatch > 0)
+            if ((longestMatch == str.Length) || (partials && longestMatch>0))
             {
                 root = longestState.MuhTree.ToXml(xmlDocument);
                 root.SetAttribute("length", longestMatch.ToString());
@@ -94,7 +96,7 @@ namespace Projektni2019_BNFParser
             {
 
             }
-            return root;
+            return (root,longestState);
         }
 
         private void COMPLETER(State state, int k, List<HashSet<State>> states)
@@ -166,12 +168,12 @@ namespace Projektni2019_BNFParser
             }
         }
 
-        private (State,int) FindLongestStateInSet(HashSet<State> states, int strlen, bool finalOnly, bool finishedOnly, string startName)
+        private (State,int) FindLongestStateInSet(HashSet<State> states, int strlen, bool finishedOnly)
         {
             int longestLength = 0;
             State longest = null;
             foreach (State s in states)
-                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && ((finalOnly && s.Production.Name.Equals(startName)) || !finalOnly))
+                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && s.Production.Name.Equals(StartingProduction.Name))
                 {
                     int matchLength = strlen - s.InputPosition;
                     if (matchLength > longestLength)

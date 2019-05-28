@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BnfExpression.cs" />
+    <Compile Include="ParseResult.cs" />
     <Compile Include="Production.cs" />
     <Compile Include="BnfRuleset.cs" />
     <Compile Include="BnfToken.cs" />
