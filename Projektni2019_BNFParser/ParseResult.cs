@@ -10,10 +10,7 @@ namespace Projektni2019_BNFParser
 
         public bool Finished
         {
-            get
-            {
-                return FinishingState.Finished();
-            }
+            get => FinishingState.Finished();
         }
         public String MissingStates
         {
@@ -28,10 +25,7 @@ namespace Projektni2019_BNFParser
 
         public XmlElement XmlRootElement
         {
-            get
-            {
-                return FinishingState.MuhTree.ToXml(new XmlDocument());
-            }
+            get => FinishingState.MuhTree.ToXml(new XmlDocument());
         }
 
         public ParseResult(State s) => FinishingState = s;

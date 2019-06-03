@@ -158,6 +158,7 @@ namespace Projektni2019_BNFParser
                     else if (adding.Production.Tokens[adding.DotPosition - 1] is MailToken)
                         node.Name = "mejl_adresa";
                 }
+                //Zato sto je Dictionary<> moras provjeriti postoji li taj set prije nego sto dodas nesto u set
                 if (!S.Keys.Contains(k+match.Length))
                     S[k + match.Length] = new HashSet<State>();
                 S[k + match.Length].Add(adding);

@@ -31,10 +31,7 @@ namespace Projektni2019_BNFParser
         private static readonly Regex mejlAdresaRegex = new Regex(mejlAdresaString, RegexOptions.Compiled);
 
         private BnfExpression(Production production, string name)
-        {
-            Production = production;
-            Name = name;
-        }
+            => (Production, Name) = (production, name);
 
         public string Name { get; private set; }
         public Production Production { get; private set; }
@@ -54,65 +51,63 @@ namespace Projektni2019_BNFParser
             List<Production> Patterns = new List<Production>();
             Production currentPattern = new Production(Name);
             line = line.Substring(assignmentMatch.Length).Trim();
-
+            bool orAllowed = false;
             while (line.Length > 0)
             {
                 Match rhsMatch = tokenRegex.Match(line);
                 if (rhsMatch.Success && rhsMatch.Index == 0)
-                    currentPattern.AddToken(new BnfToken(false, rhsMatch.Groups[1].Value, null));
+                { currentPattern.AddToken(new BnfToken(false, rhsMatch.Groups[1].Value, null)); orAllowed = true; }
                 else
                 {
                     rhsMatch = terminalRegex.Match(line);
                     if (rhsMatch.Success && rhsMatch.Index == 0)
-                        currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value));
+                    { currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value)); orAllowed = true; } 
                     else
                     {
                         rhsMatch = operatorOrRegex.Match(line);
-                        if (rhsMatch.Success && rhsMatch.Index == 0)
+                        if (rhsMatch.Success && rhsMatch.Index == 0 && orAllowed)
                         {
                             Patterns.Add(currentPattern);
                             currentPattern = new Production(Name);
+                            orAllowed = false;
                         }
                         else
                         {
-                            //Ovo su oni ::= regex(...)
                             rhsMatch = regexTokenRegex.Match(line);
                             if (rhsMatch.Success && rhsMatch.Index == 0)
-                                currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value,false));
+                            { currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value, false)); orAllowed = true; }
                             else
                             {
                                 rhsMatch = velikiGradRegex.Match(line);
                                 if (rhsMatch.Success && rhsMatch.Index == 0)
-                                    currentPattern.AddToken(new CityToken());
+                                { currentPattern.AddToken(new CityToken()); orAllowed = true; }
                                 else
                                 {
                                     rhsMatch = brojTelefonaRegex.Match(line);
                                     if (rhsMatch.Success && rhsMatch.Index == 0)
-                                        currentPattern.AddToken(new PhoneToken());
+                                    { currentPattern.AddToken(new PhoneToken()); orAllowed = true; }
                                     else
                                     {
                                         rhsMatch = webLinkRegex.Match(line);
                                         if (rhsMatch.Success && rhsMatch.Index == 0)
-                                            currentPattern.AddToken(new UrlToken());
+                                        { currentPattern.AddToken(new UrlToken()); orAllowed = true; }
                                         else
                                         {
                                             rhsMatch = brojevnaKonstantaRegex.Match(line);
                                             if (rhsMatch.Success && rhsMatch.Index == 0)
-                                                currentPattern.AddToken(new NumberToken());
+                                            { currentPattern.AddToken(new NumberToken()); orAllowed = true; }
                                             else
                                             {
                                                 rhsMatch = mejlAdresaRegex.Match(line);
                                                 if (rhsMatch.Success && rhsMatch.Index == 0)
-                                                    currentPattern.AddToken(new MailToken());
+                                                { currentPattern.AddToken(new MailToken()); orAllowed = true; }
                                                 else
                                                     throw new ArgumentException("Nepoznat token u izrazu!");
                                             }
                                         }
                                     }
-
                                 }
                             }
-
                         }
                     }
                 }
@@ -128,9 +123,7 @@ namespace Projektni2019_BNFParser
             return split;
         }
 
-        public override string ToString()
-        {
-            return "Expression: ";
-        }
+        public override string ToString() => "Expression: ";
+        
     }
 }

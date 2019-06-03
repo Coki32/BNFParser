@@ -1,2 +1,5 @@
+<ting> ::= "mr " <c> | "dr " <c> | <ting> " " <t>
+<c> ::= <t> " " <t> 
+<t> ::= regex(\w{2,})
 <match> ::= web_link " " mejl_adresa " " <password>
 <password>::=regex([a-zA-Z0-9!@#$%^&*(]{6,})
