@@ -35,7 +35,7 @@ namespace Projektni2019_BNFParser
                         lineElement.AppendChild(child);
                         root.AppendChild(lineElement);//Greska posto uvijek pravi novi XML dokument
                         //pa ne moze ovo da doda jer je iz drugog dokumenta
-                            
+                            //I did a thing.
                     }
                 }
                 else
