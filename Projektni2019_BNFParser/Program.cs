@@ -68,9 +68,11 @@ namespace Projektni2019_BNFParser
                             Console.WriteLine($"Linija {line} se ne moze parsirati po zadatom formatu");
                             if (finishedState != null)
                             {
-                                Console.WriteLine($"Nedostaju jos: ");
-                                for (int i = finishedState.DotPosition; i < finishedState.Production.Tokens.Count; i++)
-                                    Console.WriteLine($"{finishedState.Production.Tokens[i].ToString()}");
+                                ParseResult pr = new ParseResult(finishedState);
+                                Console.WriteLine($"Nedostaju jos:\n{pr.MissingStates}");
+
+                                //for (int i = finishedState.DotPosition; i < finishedState.Production.Tokens.Count; i++)
+                                //    Console.WriteLine($"{finishedState.Production.Tokens[i].ToString()}");
                             }
                         }
                         lineNumber++;
