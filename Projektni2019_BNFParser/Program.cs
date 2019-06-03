@@ -45,6 +45,7 @@ namespace Projektni2019_BNFParser
                 Console.WriteLine("Aplikacija prima 2 argumenta! Prvi ulazni .txt fajl i drugi izlazni .xml fajl!");
         }
 
+        
         static void Main(string[] args)
         {
             if (args.Count() == 2)
@@ -54,7 +55,6 @@ namespace Projektni2019_BNFParser
                     int lineNumber = 1;
                     string[] inputLines = File.ReadAllLines(args[0]).ToArray();
                     BnfRuleset ruleset = new BnfRuleset(File.ReadAllLines("./config/config.bnf").ToArray());
-                    XmlElement root = null;
                     foreach (string line in inputLines)
                     {
                         (XmlElement child, State finishedState) = ruleset.Parse(line, false);
@@ -64,8 +64,15 @@ namespace Projektni2019_BNFParser
                             doc.AppendChild(child);
                             doc.Save(lineNumber + ".xml");
                         }
-                        else
+                        else{
                             Console.WriteLine($"Linija {line} se ne moze parsirati po zadatom formatu");
+                            if (finishedState != null)
+                            {
+                                Console.WriteLine($"Nedostaju jos: ");
+                                for (int i = finishedState.DotPosition; i < finishedState.Production.Tokens.Count; i++)
+                                    Console.WriteLine($"{finishedState.Production.Tokens[i].ToString()}");
+                            }
+                        }
                         lineNumber++;
                         #region smece
                         //if (child == null)

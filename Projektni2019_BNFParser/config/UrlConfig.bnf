@@ -1,4 +1,5 @@
-<URL> ::= "http" <mozdaS> "://" <host> | <URL> <path> | <queryURL> | <URL> "/"
+<URL> ::= <start> "://" <host> | <URL> <path> | <queryURL> | <URL> "/" | "mailto:" mejl_adresa
+<start> ::= "http" <mozdaS> | "ftp" 
 <queryURL> ::= <URL> <path> <query> | <URL> "/" <query>
 <host> ::= <hostBlok> "." <hostBlok> | <host> "." <hostBlok>
 <hostBlok> ::= regex([A-Za-z_0-9]+)
@@ -8,5 +9,5 @@
 <hex> ::= regex(%[0-9A-Fa-f]{2})
 <query> ::= "?" <KVPair> | <query> "&" <KVPair>
 <KVPair> ::= <key> | <key> "=" <value>
-<key> ::= regex([a-zA-Z0-9_]+)
-<value> ::= regex([a-zA-Z0-9_\-]+)
+<key> ::= regex([a-zA-Z0-9_+]+)
+<value> ::= regex([a-zA-Z0-9_\-+]+)

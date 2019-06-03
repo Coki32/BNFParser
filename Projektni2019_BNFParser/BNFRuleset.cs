@@ -44,17 +44,23 @@ namespace Projektni2019_BNFParser
         }
         public (XmlElement, State) Parse(string str, bool partials)
         {
-            List<HashSet<State>> S = new List<HashSet<State>>();
-            for (int i = 0; i <= str.Length; i++)
-                S.Add(new HashSet<State>());
+            /**
+             * Earley Wikipedia kaze koristi se niz setova, to je ok kad parsiras tekst
+             * znak po znak. Medjutim, ova implementacija ne radi znak po znak, hvata "komade"
+             * teksta. Zato ako na pocetku prepozna rijec od 15 karaktera nema potrebe za dodatnih 14
+             * praznih setova izmedju toga i tih 14 koraka dok ne dodje do seta koji ima elemente
+             */
+            Dictionary<int, HashSet<State>> S = new Dictionary<int, HashSet<State>>();
+
             var pocetna = Productions.Where(p => p.Name.Equals(Productions[0].Name)).Select(p => new State(p, 0, 0));
+            S[0] = new HashSet<State>();
             foreach (State s in pocetna)
                 S[0].Add(s);
             XmlDocument xmlDocument = new XmlDocument();
             XmlElement root = null;
-            //Magija
-            for (int k = 0; k <= str.Length; k++)
+            for(int p = 0; p < S.Keys.Count; p++)
             {
+                int k = S.Keys.ElementAt(p);
                 for (int i = 0; i < S[k].Count; i++)
                 {
                     State state = S[k].ElementAt(i);
@@ -67,18 +73,17 @@ namespace Projektni2019_BNFParser
                         COMPLETER(state, k, S);
                 }
             }
-#if SpammyOutput
-            int[] setCounts = S.Select(set => set.Count).ToArray();
-            int total = setCounts.Sum();
-            Console.WriteLine($"[{setCounts.Select(br => br.ToString()).Aggregate((s1,s2)=>s1+", "+s2)}]" +
-                $"total: {total}");
-#endif
-            (State longestState, int longestMatch) = FindLongestStateInSet(S[str.Length],str.Length, !partials);
-            if (partials && longestState == null)
+            //Uvijek SAMO FINISHED stanja, koje nije gotovo me ne zanima ovdje
+            (State longestState, int longestMatch) = (null, 0);
+            if (S.Keys.Contains(str.Length))
+                (longestState, longestMatch) = FindLongestStateInSet(S[str.Length],str.Length, true);
+
+            //sad, ako je rekao partials i ako nije nasao ranije, trazi partial
+            if (partials || longestState == null)
             {
-                for(int i=str.Length-1; i>=0; i--)
+                foreach(int i in S.Keys.Reverse())
                 {
-                    (State st, int len) next = FindLongestStateInSet(S[i], i, !partials);
+                    (State st, int len) next = FindLongestStateInSet(S[i], i, false);
                     if (next.len > longestMatch)
                     {
                         (longestState, longestMatch) = next;
@@ -87,52 +92,44 @@ namespace Projektni2019_BNFParser
                     }
                 }
             }
-            if ((longestMatch == str.Length) || (partials && longestMatch>0))
+            
+            if ((longestMatch == str.Length && longestState.Finished()) || (partials && longestMatch>0))
             {
                 root = longestState.MuhTree.ToXml(xmlDocument);
                 root.SetAttribute("length", longestMatch.ToString());
             }
-            else
-            {
-
-            }
+            else//ova grana bi trebalo da sluzi za nesto, ali se ne sjecam sta
+            { }
             return (root,longestState);
         }
 
-        private void COMPLETER(State state, int k, List<HashSet<State>> states)
+        private void COMPLETER(State state, int k, Dictionary<int,HashSet<State>> states)
         {
             //Ovaj set StartedAt je izdvojen jer kad je produkcija duzine 0 onda je StartedAt == states[k]
             //A ne da da se kolekcija mijenja dok kroz nju iterira foreach petlja
-            HashSet<State> StartedAt = states.ElementAt(state.InputPosition).Where(st => !st.Finished() && st.NextElement().Name.Equals(state.Production.Name)).ToHashSet();
+            HashSet<State> StartedAt = states[state.InputPosition].Where(st => !st.Finished() && st.NextElement().Name.Equals(state.Production.Name)).ToHashSet();
             foreach (State s in StartedAt)
             {
                 State adding = new State(s.Production, s.DotPosition + 1, s.InputPosition);
 
-                //adding.MuhTree.Root.AddChild(s.MuhTree.Root);
                 adding.MuhTree.Root.AddChildren(s.MuhTree.Root.Children);
                 adding.MuhTree.Root.AddChild(state.MuhTree.Root);
-#if SpammyOutput
-                Console.WriteLine($"COMPLETER Zavrsio: {adding}");
-#endif
+
                 states[k].Add(adding);
             }
 
         }
 
-        //ne mora da dobije Grammar jer Grammar je Producitons iz klase
         private void PREDICTOR(State state, int k, HashSet<State> Sk)
         {
             foreach (Production by in Productions.Where(prod => prod.Name.Equals(state.NextElement().Name) && prod != state.Production))
             {
                 State adding = new State(by, 0, k);
-#if SpammyOutput
-                Console.WriteLine($"PREDICTOR Predvidio: {adding}");
-#endif
                 Sk.Add(adding);
             }
         }
 
-        private void SCANNER(State state, int k, string str, List<HashSet<State>> S)
+        private void SCANNER(State state, int k, string str, Dictionary<int,HashSet<State>> S)
         {
             Match match = state.Production.Tokens[state.DotPosition].IsMatch(str.Substring(k));
             if (match.Success && match.Index == 0)
@@ -161,19 +158,18 @@ namespace Projektni2019_BNFParser
                     else if (adding.Production.Tokens[adding.DotPosition - 1] is MailToken)
                         node.Name = "mejl_adresa";
                 }
-#if SpammyOutput
-                Console.WriteLine($"SCANNER Procitao: {adding}");
-#endif
+                if (!S.Keys.Contains(k+match.Length))
+                    S[k + match.Length] = new HashSet<State>();
                 S[k + match.Length].Add(adding);
             }
         }
 
-        private (State,int) FindLongestStateInSet(HashSet<State> states, int strlen, bool finishedOnly)
+        private (State,int) FindLongestStateInSet(HashSet<State> states, int strlen, bool finished)
         {
             int longestLength = 0;
             State longest = null;
             foreach (State s in states)
-                if (((s.Finished() && finishedOnly) || (!finishedOnly)) && s.Production.Name.Equals(StartingProduction.Name))
+                if (((s.Finished() && finished) || (!finished)) && s.Production.Name.Equals(StartingProduction.Name))
                 {
                     int matchLength = strlen - s.InputPosition;
                     if (matchLength > longestLength)

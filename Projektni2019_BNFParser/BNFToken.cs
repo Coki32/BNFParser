@@ -4,13 +4,14 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Xml;
+using System.Text;
 
 namespace Projektni2019_BNFParser
 {
     class BnfToken
     {
 
-        static readonly string[] specials = { "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "<", ">" };
+        static readonly string[] specials = { "\\", "[", "\"", "^", "$", ".", "|", "?", "*", "+", "(", ")", "{", "}", "<", ">" };
         public bool Terminal { get; private set; }
 
         //Ako je neterminalni imace ime
@@ -50,6 +51,7 @@ namespace Projektni2019_BNFParser
 
         private string EscapeSpecials(string str)
         {
+            StringBuilder sb = new StringBuilder();
             foreach (string special in specials)
                 str = str.Replace(special, "\\" + special);
             return str;
@@ -57,7 +59,7 @@ namespace Projektni2019_BNFParser
 
         public override string ToString()
         {
-            return Terminal ? Expression.ToString() : Name;
+            return Terminal ? "Terminal: \"" + Expression.ToString() + "\"" : Name;
         }
         public virtual Match IsMatch(string str)
         {
@@ -147,6 +149,11 @@ namespace Projektni2019_BNFParser
             }
         }
 
+        public override string ToString()
+        {
+            return "web_link";
+        }
+
         public override Match IsMatch(string str)
         {
             (XmlElement root, _) = StaticItems.UrlRuleset.Parse(str, true);
@@ -160,6 +167,11 @@ namespace Projektni2019_BNFParser
     class MailToken : BnfToken
     {
         public MailToken() : base(true, "mejl_adresa", "[a-zA-Z0-9.!#$%&’*+\\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*", false) { }
+
+        public override string ToString()
+        {
+            return "mejl_adresa";
+        }
     }
 
 }
