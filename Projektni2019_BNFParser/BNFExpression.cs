@@ -38,7 +38,7 @@ namespace Projektni2019_BNFParser
 
         public static BnfExpression[] MakeExpressions(string line)
         {
-
+            int startLen = line.Length;
             line = line.Trim();//ooodma skrati razmake
             Match tokenMatch = tokenRegex.Match(line);
             if (tokenMatch.Index != 0)
@@ -81,7 +81,7 @@ namespace Projektni2019_BNFParser
                                 string expr = getTextBetweenBrackets(line);
                                 if (expr == null)
                                 {
-                                    throw new Exception("Regex nema matching zagrade!");
+                                    throw new ArgumentException("Regex nema matching zagrade!");
                                 }
                                 line = line.Substring(expr.Length).Trim();
                                 currentPattern.AddToken(new BnfToken(true, "", expr, false));
@@ -114,7 +114,7 @@ namespace Projektni2019_BNFParser
                                                 if (rhsMatch.Success && rhsMatch.Index == 0)
                                                 { currentPattern.AddToken(new MailToken()); orAllowed = true; }
                                                 else
-                                                    throw new ArgumentException("Nepoznat token u izrazu!");
+                                                    throw new ArgumentException($"Nepoznat token u izrazu! Pozicija {startLen-line.Length+1}");
                                             }
                                         }
                                     }

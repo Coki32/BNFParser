@@ -48,7 +48,17 @@ namespace Projektni2019_BNFParser
                     int lineNumber = 1;
                     //kad bude finalno samo spoji linije sve u jednu i reci inputLine lol
                     string[] inputLines = File.ReadAllLines(args[0]).ToArray();
-                    BnfRuleset ruleset = new BnfRuleset(File.ReadAllLines("./config/config.bnf").ToArray());
+                    BnfRuleset ruleset = null;
+                    try
+                    {
+                        ruleset = new BnfRuleset(File.ReadAllLines("./config/config.bnf").ToArray());
+                    }
+                    catch(ArgumentException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine($"Izvor izuzetka: {ex.InnerException.Message}");
+                        return;
+                    }
                     foreach (string line in inputLines)
                     {
                         (XmlElement child, State finishedState) = ruleset.Parse(line, false);
