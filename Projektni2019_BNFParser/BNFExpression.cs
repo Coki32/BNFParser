@@ -8,10 +8,10 @@ namespace Projektni2019_BNFParser
     {
 
         private static readonly string tokenString = "<([\\w-]*)>";
-        private static readonly string terminalString = "\"(.*?)\"";
+        private static readonly string terminalString = "(\"(.*?)\"|(')(.*?)('))";
         private static readonly string operatorOrString = "\\|";
         private static readonly string operatorAssignString = "::=";
-        private static readonly string regexTokenString = "regex\\((.*?)\\)";
+        private static readonly string regexTokenString = "regex";
         private static readonly string velikiGradString = "veliki_grad";
         private static readonly string brojTelefonaString = "broj_telefona";
         private static readonly string webLinkString = "web_link";
@@ -61,7 +61,7 @@ namespace Projektni2019_BNFParser
                 {
                     rhsMatch = terminalRegex.Match(line);
                     if (rhsMatch.Success && rhsMatch.Index == 0)
-                    { currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value)); orAllowed = true; } 
+                    { currentPattern.AddToken(new BnfToken(true, "", GetActualTerminal(rhsMatch))); orAllowed = true; } 
                     else
                     {
                         rhsMatch = operatorOrRegex.Match(line);
@@ -75,7 +75,19 @@ namespace Projektni2019_BNFParser
                         {
                             rhsMatch = regexTokenRegex.Match(line);
                             if (rhsMatch.Success && rhsMatch.Index == 0)
-                            { currentPattern.AddToken(new BnfToken(true, "", rhsMatch.Groups[1].Value, false)); orAllowed = true; }
+                            {
+                                //ciganluk, znam... ooooj.
+                                line = line.Substring(rhsMatch.Length).Trim();
+                                string expr = getTextBetweenBrackets(line);
+                                if (expr == null)
+                                {
+                                    throw new Exception("Regex nema matching zagrade!");
+                                }
+                                line = line.Substring(expr.Length).Trim();
+                                currentPattern.AddToken(new BnfToken(true, "", expr, false));
+                                orAllowed = true;
+                                continue;
+                            }
                             else
                             {
                                 rhsMatch = velikiGradRegex.Match(line);
@@ -122,6 +134,32 @@ namespace Projektni2019_BNFParser
                 split[i] = new BnfExpression(Patterns[i], Name);
             return split;
         }
+
+        static string getTextBetweenBrackets(string str)
+        {
+            int len = 0;
+            if (str[0] != '(')
+                return null;
+            else
+            {
+                int c = 0;
+                int idx = 0;
+                do
+                {
+                    if (str[idx] == '(')
+                        c++;
+                    else if (str[idx] == ')')
+                        c--;
+                    idx++;
+                } while (c != 0 && idx < str.Length);
+                if (c != 0)
+                    return null;
+                len = idx;
+            }
+            return str.Substring(0, len);
+        }
+
+        private static string GetActualTerminal(Match match) => match.Groups[0].Value.StartsWith("\"") ? match.Groups[2].Value : match.Groups[4].Value;
 
         public override string ToString() => "Expression: ";
         
