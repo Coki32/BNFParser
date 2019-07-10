@@ -79,7 +79,8 @@ namespace Projektni2019_BNFParser
             if (S.Keys.Contains(str.Length))
                 (longestState, longestMatch) = FindLongestStateInSet(S[str.Length],str.Length, true);
 
-            //sad, ako je rekao partials i ako nije nasao ranije, trazi partial
+            //sad, ako je rekao partials
+            //Ili ako je najduze stanje null jer treba onaj ko je pozvao Parse moze ispisati sta je bilo
             if (partials || longestState == null)
             {
                 foreach(int i in S.Keys.Reverse())
@@ -93,8 +94,8 @@ namespace Projektni2019_BNFParser
                     }
                 }
             }
-            else//ova grana bi trebalo da sluzi za nesto, ali se ne sjecam sta
-            { }
+            //else //ova grana bi trebalo da sluzi za nesto, ali se ne sjecam sta
+            //{ }
             return new ParseResult(longestState, longestMatch);
         }
 
@@ -107,8 +108,8 @@ namespace Projektni2019_BNFParser
             {
                 State adding = new State(s.Production, s.DotPosition + 1, s.InputPosition);
 
-                adding.MuhTree.Root.AddChildren(s.MuhTree.Root.Children);
-                adding.MuhTree.Root.AddChild(state.MuhTree.Root);
+                adding.ParseTree.Root.AddChildren(s.ParseTree.Root.Children);
+                adding.ParseTree.Root.AddChild(state.ParseTree.Root);
 
                 states[k].Add(adding);
             }
@@ -133,13 +134,13 @@ namespace Projektni2019_BNFParser
                 State adding = new State(state.Production, state.DotPosition + 1, state.InputPosition);
                 //Ako je to jedini token u izrazu onda tag moze da se zove tako
                 if (adding.Production.Tokens.Count == 1)
-                    adding.MuhTree.Root.Value = match.Groups[0].Value;
+                    adding.ParseTree.Root.Value = match.Groups[0].Value;
                 else
                 {
                     //Inace ako nije jedini onda kopiraj ostalu djecu
-                    adding.MuhTree.Root.AddChildren(state.MuhTree.Root.Children);
+                    adding.ParseTree.Root.AddChildren(state.ParseTree.Root.Children);
                     //napravi <literal> tag
-                    var node = adding.MuhTree.AddScannedChild(match.Groups[0].Value);
+                    var node = adding.ParseTree.AddScannedChild(match.Groups[0].Value);
                     //Ako je veliki grad necu da tag bude <literal> pa ako jeste veliki grad to mu bude tag
                     //Ako je regex(...) u sred izraza mozda ostavim <literal> jer ima istu ulogu
                     //URL ce imati svoj token, 

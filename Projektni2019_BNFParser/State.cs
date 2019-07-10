@@ -10,7 +10,7 @@ namespace Projektni2019_BNFParser
 
         public int InputPosition { get; private set; }
 
-        public Tree MuhTree { get; set; }
+        public Tree ParseTree { get; set; }
 
         public override int GetHashCode() =>
             Production.GetHashCode() + DotPosition.GetHashCode() * 17 + InputPosition.GetHashCode() * 31;
@@ -24,7 +24,7 @@ namespace Projektni2019_BNFParser
         }
 
         public State(Production production, int dotPosition, int inputPosition) =>
-            (Production, DotPosition, InputPosition, MuhTree) = (production, dotPosition, inputPosition, new Tree(production.Name, null));
+            (Production, DotPosition, InputPosition, ParseTree) = (production, dotPosition, inputPosition, new Tree(production.Name, null));
 
         //To stanje je gotovo kad nema vise tokena u produkciji
         public bool Finished() => DotPosition == Production.Tokens.Count;

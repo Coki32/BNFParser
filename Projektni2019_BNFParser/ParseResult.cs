@@ -24,7 +24,7 @@ namespace Projektni2019_BNFParser
 
         public XmlElement XmlRootElement
         {
-            get => FinishingState.MuhTree.ToXml(new XmlDocument());
+            get => FinishingState.ParseTree.ToXml(new XmlDocument());
         }
 
         public ParseResult(State s, int length) => (FinishingState, MatchLength) = (s, length);

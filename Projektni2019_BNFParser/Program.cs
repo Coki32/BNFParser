@@ -32,7 +32,7 @@ namespace Projektni2019_BNFParser
                     if (result.Finished)
                     {
                         XmlDocument doc = new XmlDocument();
-                        XmlElement root = result.FinishingState.MuhTree.ToXml(doc);
+                        XmlElement root = result.FinishingState.ParseTree.ToXml(doc);
                         doc.AppendChild(root);
                         doc.Save(args[1]);
                         Console.WriteLine($"Uspjesno parsirano, izlaz upisan u datoteku {args[1]}");
