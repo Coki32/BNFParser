@@ -156,10 +156,10 @@ namespace Projektni2019_BNFParser
 
         public override Match IsMatch(string str)
         {
-            (XmlElement root, _) = StaticItems.UrlRuleset.Parse(str, true);
-            if (root == null)
+            ParseResult result = StaticItems.UrlRuleset.Parse(str, true);
+            if (result.XmlRootElement == null)
                 return Match.Empty;
-            int length = int.Parse(root.GetAttribute("length"));
+            int length = result.MatchLength;
             return expr.Match(str.Substring(0, length));
         }
     }

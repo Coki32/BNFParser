@@ -7,16 +7,16 @@ namespace Projektni2019_BNFParser
     class BnfExpression
     {
 
-        private static readonly string tokenString = "<([\\w-]*)>";
-        private static readonly string terminalString = "(\"(.*?)\"|(')(.*?)('))";
-        private static readonly string operatorOrString = "\\|";
-        private static readonly string operatorAssignString = "::=";
-        private static readonly string regexTokenString = "regex";
-        private static readonly string velikiGradString = "veliki_grad";
-        private static readonly string brojTelefonaString = "broj_telefona";
-        private static readonly string webLinkString = "web_link";
-        private static readonly string brojevnaKonstantaString = "brojevna_konstanta";
-        private static readonly string mejlAdresaString = "mejl_adresa";
+        private static readonly string tokenString = "^<([\\w-]*)>";
+        private static readonly string terminalString = "^(\"(.*?)\"|(')(.*?)('))";
+        private static readonly string operatorOrString = "^\\|";
+        private static readonly string operatorAssignString = "^::=";
+        private static readonly string regexTokenString = "^regex";
+        private static readonly string velikiGradString = "^veliki_grad";
+        private static readonly string brojTelefonaString = "^broj_telefona";
+        private static readonly string webLinkString = "^web_link";
+        private static readonly string brojevnaKonstantaString = "^brojevna_konstanta";
+        private static readonly string mejlAdresaString = "^mejl_adresa";
 
 
         private static readonly Regex tokenRegex = new Regex(tokenString, RegexOptions.Compiled);
@@ -30,13 +30,7 @@ namespace Projektni2019_BNFParser
         private static readonly Regex brojevnaKonstantaRegex = new Regex(brojevnaKonstantaString, RegexOptions.Compiled);
         private static readonly Regex mejlAdresaRegex = new Regex(mejlAdresaString, RegexOptions.Compiled);
 
-        private BnfExpression(Production production, string name)
-            => (Production, Name) = (production, name);
-
-        public string Name { get; private set; }
-        public Production Production { get; private set; }
-
-        public static BnfExpression[] MakeExpressions(string line)
+        public static Production[] GetProductions(string line)
         {
             int startLen = line.Length;
             line = line.Trim();//ooodma skrati razmake
@@ -55,17 +49,17 @@ namespace Projektni2019_BNFParser
             while (line.Length > 0)
             {
                 Match rhsMatch = tokenRegex.Match(line);
-                if (rhsMatch.Success && rhsMatch.Index == 0)
+                if (rhsMatch.Success)
                 { currentPattern.AddToken(new BnfToken(false, rhsMatch.Groups[1].Value, null)); orAllowed = true; }
                 else
                 {
                     rhsMatch = terminalRegex.Match(line);
-                    if (rhsMatch.Success && rhsMatch.Index == 0)
-                    { currentPattern.AddToken(new BnfToken(true, "", GetActualTerminal(rhsMatch))); orAllowed = true; } 
+                    if (rhsMatch.Success)
+                    { currentPattern.AddToken(new BnfToken(true, "", GetActualTerminal(rhsMatch))); orAllowed = true; }
                     else
                     {
                         rhsMatch = operatorOrRegex.Match(line);
-                        if (rhsMatch.Success && rhsMatch.Index == 0 && orAllowed)
+                        if (rhsMatch.Success && orAllowed)
                         {
                             Patterns.Add(currentPattern);
                             currentPattern = new Production(Name);
@@ -74,9 +68,8 @@ namespace Projektni2019_BNFParser
                         else
                         {
                             rhsMatch = regexTokenRegex.Match(line);
-                            if (rhsMatch.Success && rhsMatch.Index == 0)
+                            if (rhsMatch.Success)
                             {
-                                //ciganluk, znam... ooooj.
                                 line = line.Substring(rhsMatch.Length).Trim();
                                 string expr = getTextBetweenBrackets(line);
                                 if (expr == null)
@@ -86,35 +79,35 @@ namespace Projektni2019_BNFParser
                                 line = line.Substring(expr.Length).Trim();
                                 currentPattern.AddToken(new BnfToken(true, "", expr, false));
                                 orAllowed = true;
-                                continue;
+                                continue;//Jer sam vec skratio liniju, ne mora je na kraju petlje skratiti
                             }
                             else
                             {
                                 rhsMatch = velikiGradRegex.Match(line);
-                                if (rhsMatch.Success && rhsMatch.Index == 0)
+                                if (rhsMatch.Success)
                                 { currentPattern.AddToken(new CityToken()); orAllowed = true; }
                                 else
                                 {
                                     rhsMatch = brojTelefonaRegex.Match(line);
-                                    if (rhsMatch.Success && rhsMatch.Index == 0)
+                                    if (rhsMatch.Success)
                                     { currentPattern.AddToken(new PhoneToken()); orAllowed = true; }
                                     else
                                     {
                                         rhsMatch = webLinkRegex.Match(line);
-                                        if (rhsMatch.Success && rhsMatch.Index == 0)
+                                        if (rhsMatch.Success)
                                         { currentPattern.AddToken(new UrlToken()); orAllowed = true; }
                                         else
                                         {
                                             rhsMatch = brojevnaKonstantaRegex.Match(line);
-                                            if (rhsMatch.Success && rhsMatch.Index == 0)
+                                            if (rhsMatch.Success)
                                             { currentPattern.AddToken(new NumberToken()); orAllowed = true; }
                                             else
                                             {
                                                 rhsMatch = mejlAdresaRegex.Match(line);
-                                                if (rhsMatch.Success && rhsMatch.Index == 0)
+                                                if (rhsMatch.Success)
                                                 { currentPattern.AddToken(new MailToken()); orAllowed = true; }
                                                 else
-                                                    throw new ArgumentException($"Nepoznat token u izrazu! Pozicija {startLen-line.Length+1}");
+                                                    throw new ArgumentException($"Nepoznat token u izrazu! Pozicija {startLen - line.Length + 1}");
                                             }
                                         }
                                     }
@@ -129,13 +122,10 @@ namespace Projektni2019_BNFParser
             if (currentPattern.Tokens.Count > 0)
                 Patterns.Add(currentPattern);
 
-            BnfExpression[] split = new BnfExpression[Patterns.Count];
-            for (int i = 0; i < Patterns.Count; i++)
-                split[i] = new BnfExpression(Patterns[i], Name);
-            return split;
+            return Patterns.ToArray();
         }
 
-        static string getTextBetweenBrackets(string str)
+        private static string getTextBetweenBrackets(string str)
         {
             int len = 0;
             if (str[0] != '(')
@@ -162,6 +152,6 @@ namespace Projektni2019_BNFParser
         private static string GetActualTerminal(Match match) => match.Groups[0].Value.StartsWith("\"") ? match.Groups[2].Value : match.Groups[4].Value;
 
         public override string ToString() => "Expression: ";
-        
+
     }
 }

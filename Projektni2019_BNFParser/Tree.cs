@@ -42,6 +42,7 @@ namespace Projektni2019_BNFParser
         public Tree(string name, string value) => Root = new Node(name, value);
 
         public XmlElement ToXml(XmlDocument doc) => Root.ToXml(doc);
+
         public Node AddScannedChild(string value) => Root.AddChild(new Node(null, value));
 
     }

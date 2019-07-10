@@ -1,3 +1,4 @@
-<nesto> ::= regex((a|b)+(c|d*))s | "Stefan" 
-
-<stuff> ::= web_link " " mejl_adresa " " regex(.*)
+<test> ::= <ime> " " <pre> " " web_link " " mejl_adresa  | " " <test> ""
+<ime> ::= <slovo> | <slovo> <ime>
+<pre> ::= regex(\w+) | ""
+<slovo> ::= regex(\w)

@@ -18,16 +18,18 @@ namespace Projektni2019_BNFParser
             int n = 0;
             foreach (string line in lines)
             {
-                BnfExpression[] expressions = null;
+                Production[] productions = null;
                 try
                 {
-                    expressions = BnfExpression.MakeExpressions(line);
+                    productions = BnfExpression.GetProductions(line);
                 }
                 catch (ArgumentException ex)
                 {
                     throw new ArgumentException($"Greska u liniji {n}", ex);
                 }
-                Productions.AddRange(expressions.Select(expr => new Production(expr.Production.Tokens, expr.Name)));
+                if (Productions.Any(p => p.Name.Equals(productions.First().Name)))
+                    throw new ArgumentException($"Token <{productions.First().Name}> vec postoji u BNF-u, redefinicija na liniji {n} nije dozvoljena!");
+                Productions.AddRange(productions);
                 n++;
             }
             var existingNames = Productions.Select(p => p.Name).Distinct();
@@ -38,11 +40,11 @@ namespace Projektni2019_BNFParser
             }
         }
 
-        public (XmlElement, State) Parse(string str)
+        public ParseResult Parse(string str)
         {
             return Parse(str, false);
         }
-        public (XmlElement, State) Parse(string str, bool partials)
+        public ParseResult Parse(string str, bool partials)
         {
             /**
              * Earley Wikipedia kaze koristi se niz setova, to je ok kad parsiras tekst
@@ -57,7 +59,6 @@ namespace Projektni2019_BNFParser
             foreach (State s in pocetna)
                 S[0].Add(s);
             XmlDocument xmlDocument = new XmlDocument();
-            XmlElement root = null;
             for(int p = 0; p < S.Keys.Count; p++)
             {
                 int k = S.Keys.ElementAt(p);
@@ -92,15 +93,9 @@ namespace Projektni2019_BNFParser
                     }
                 }
             }
-            
-            if ((longestMatch == str.Length && longestState.Finished()) || (partials && longestMatch>0))
-            {
-                root = longestState.MuhTree.ToXml(xmlDocument);
-                root.SetAttribute("length", longestMatch.ToString());
-            }
             else//ova grana bi trebalo da sluzi za nesto, ali se ne sjecam sta
             { }
-            return (root,longestState);
+            return new ParseResult(longestState, longestMatch);
         }
 
         private void COMPLETER(State state, int k, Dictionary<int,HashSet<State>> states)
@@ -122,7 +117,8 @@ namespace Projektni2019_BNFParser
 
         private void PREDICTOR(State state, int k, HashSet<State> Sk)
         {
-            foreach (Production by in Productions.Where(prod => prod.Name.Equals(state.NextElement().Name) && prod != state.Production))
+            //Ne sjecam se u kom slucaju je trebalo provjeriti da budu razlicite produkcije, ali to je ocito visak
+            foreach (Production by in Productions.Where(prod => prod.Name.Equals(state.NextElement().Name)))// && prod != state.Production))
             {
                 State adding = new State(by, 0, k);
                 Sk.Add(adding);

@@ -5,7 +5,9 @@ namespace Projektni2019_BNFParser
     class State
     {
         public Production Production { get; private set; }
+
         public int DotPosition { get; private set; }
+
         public int InputPosition { get; private set; }
 
         public Tree MuhTree { get; set; }
@@ -17,11 +19,8 @@ namespace Projektni2019_BNFParser
         {
             if (obj == null || obj.GetType() != GetType())
                 return false;
-            else
-            {
-                State other = obj as State;
-                return Production.Equals(other.Production) && DotPosition == other.DotPosition && InputPosition == other.InputPosition;
-            }
+            State other = obj as State;
+            return Production.Equals(other.Production) && DotPosition == other.DotPosition && InputPosition == other.InputPosition;
         }
 
         public State(Production production, int dotPosition, int inputPosition) =>

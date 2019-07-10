@@ -9,45 +9,13 @@ namespace Projektni2019_BNFParser
     class Program
     {
 
-        static string getTextBetweenBrackets(string str)
-        {
-            int len = 0;
-            if (str[0] != '(')
-                return null;
-            else
-            {
-                int c = 0;
-                int idx = 0;
-                do
-                {
-                    if (str[idx] == '(')
-                        c++;
-                    else if (str[idx] == ')')
-                        c--;
-                    idx++;
-                } while (c != 0 && idx<str.Length);
-                if (c != 0)
-                    return null;
-                len = idx;
-            }
-            return str.Substring(0, len);
-        }
-
-        static void Main12(string[] args)
-        {
-            Console.WriteLine(getTextBetweenBrackets("marko (Markovic) oca Stefana(Markovica) je odlican (5) ucenik!"));
-            Console.WriteLine(getTextBetweenBrackets("(5*(2*(a*x*sin(y)))))))))"));
-        }
-
         static void Main(string[] args)
         {
             if (args.Count() == 2)
             {
                 if (args[0].EndsWith(".txt") && args[1].EndsWith(".xml"))
                 {
-                    int lineNumber = 1;
-                    //kad bude finalno samo spoji linije sve u jednu i reci inputLine lol
-                    string[] inputLines = File.ReadAllLines(args[0]).ToArray();
+                    string inputLine = File.ReadAllLines(args[0]).Aggregate((s1, s2) => s1 + " " + s2);
                     BnfRuleset ruleset = null;
                     try
                     {
@@ -56,50 +24,23 @@ namespace Projektni2019_BNFParser
                     catch(ArgumentException ex)
                     {
                         Console.WriteLine(ex.Message);
-                        Console.WriteLine($"Izvor izuzetka: {ex.InnerException.Message}");
+                        if(ex.InnerException!=null)
+                            Console.WriteLine($"Izvor izuzetka: {ex.InnerException.Message}");
                         return;
                     }
-                    foreach (string line in inputLines)
+                    ParseResult result = ruleset.Parse(inputLine);
+                    if (result.Finished)
                     {
-                        (XmlElement child, State finishedState) = ruleset.Parse(line, false);
-                        if (child != null)
-                        {
-                            var doc = child.OwnerDocument;
-                            doc.AppendChild(child);
-                            doc.Save(lineNumber + ".xml");
-                        }
-                        else{
-                            Console.WriteLine($"Linija {line} se ne moze parsirati po zadatom formatu");
-                            if (finishedState != null)
-                            {
-                                ParseResult pr = new ParseResult(finishedState);
-                                Console.WriteLine($"Nedostaju jos:\n{pr.MissingStates}");
-
-                                //for (int i = finishedState.DotPosition; i < finishedState.Production.Tokens.Count; i++)
-                                //    Console.WriteLine($"{finishedState.Production.Tokens[i].ToString()}");
-                            }
-                        }
-                        lineNumber++;
-                        #region smece
-                        //if (child == null)
-                        //{
-                        //    Console.WriteLine($"Linija {lineNumber} se ne moze parsirati po zadatoj formi!");
-                        //}
-                        //else
-                        //{
-                        //    if (root == null)
-                        //    {
-                        //        root = child.OwnerDocument.CreateElement("linije");
-                        //    }
-                        //    var lineElement = child.OwnerDocument.CreateElement("linija");
-                        //    lineElement.SetAttribute("brojLinije", lineNumber.ToString());
-                        //    lineElement.AppendChild(child);
-                        //    XmlDocument doc = lineElement.OwnerDocument;
-                        //    doc.AppendChild(lineElement);
-                        //    doc.Save(lineNumber + ".xml");
-                        //}
-                        #endregion 
+                        XmlDocument doc = new XmlDocument();
+                        XmlElement root = result.FinishingState.MuhTree.ToXml(doc);
+                        doc.AppendChild(root);
+                        doc.Save(args[1]);
+                        Console.WriteLine($"Uspjesno parsirano, izlaz upisan u datoteku {args[1]}");
                     }
+                    else{
+                        Console.WriteLine($"Linija {inputLine} se ne moze parsirati po zadatom formatu");
+                        Console.WriteLine($"Nedostaju jos:\n{result.MissingStates}");
+                    }                    
                 }
                 else
                     Console.WriteLine("Ulzni fajl mora biti .txt, a izlazni .xml!");

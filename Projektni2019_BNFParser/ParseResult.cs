@@ -8,19 +8,18 @@ namespace Projektni2019_BNFParser
     {
         public State FinishingState { get; private set; }
 
+        public int MatchLength { get; private set; }
         public bool Finished
         {
             get => FinishingState.Finished();
         }
-        public String MissingStates
+        public string MissingStates
         {
-            get
-            {
-                return FinishingState.Finished() ? null :
-                    FinishingState.Production.Tokens.Where(t => FinishingState.Production.Tokens.IndexOf(t) >= FinishingState.DotPosition)
-                    .Select(t => t.ToString())
-                    .Aggregate((s1, s2) => s1 + "\n" + s2);
-            }
+            get => FinishingState.Finished() ? null :
+                FinishingState.Production.Tokens.Where(t => FinishingState.Production.Tokens.IndexOf(t) >= FinishingState.DotPosition)
+                .Select(t => t.ToString())
+                .Aggregate((s1, s2) => s1 + "\n" + s2);
+            
         }
 
         public XmlElement XmlRootElement
@@ -28,6 +27,6 @@ namespace Projektni2019_BNFParser
             get => FinishingState.MuhTree.ToXml(new XmlDocument());
         }
 
-        public ParseResult(State s) => FinishingState = s;
+        public ParseResult(State s, int length) => (FinishingState, MatchLength) = (s, length);
     }
 }
