@@ -125,6 +125,7 @@ namespace Projektni2019_BNFParser
             return Patterns.ToArray();
         }
 
+        //Ovo je bukvalno C, al' ono, hvata tekst izmedju zagrada korektno, radi ok
         private static string getTextBetweenBrackets(string str)
         {
             int len = 0;
