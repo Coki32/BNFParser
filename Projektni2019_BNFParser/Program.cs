@@ -3,7 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-
+//TODO: If I ever happen to have two hours to document this well in English I should, until then there's always google translate.
+//Not that there's many comments to go by anyway.
 namespace Projektni2019_BNFParser
 {
     class Program
