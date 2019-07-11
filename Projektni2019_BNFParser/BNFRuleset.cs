@@ -54,11 +54,10 @@ namespace Projektni2019_BNFParser
              */
             Dictionary<int, HashSet<State>> S = new Dictionary<int, HashSet<State>>();
 
-            var pocetna = Productions.Where(p => p.Name.Equals(Productions[0].Name)).Select(p => new State(p, 0, 0));
+            var startingStates = Productions.Where(p => p.Name.Equals(Productions[0].Name)).Select(p => new State(p, 0, 0));
             S[0] = new HashSet<State>();
-            foreach (State s in pocetna)
+            foreach (State s in startingStates)
                 S[0].Add(s);
-            XmlDocument xmlDocument = new XmlDocument();
             for(int p = 0; p < S.Keys.Count; p++)
             {
                 int k = S.Keys.ElementAt(p);
