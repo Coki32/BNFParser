@@ -11,7 +11,7 @@ namespace Projektni2019_BNFParser
         public int MatchLength { get; private set; }
         public bool Finished
         {
-            get => FinishingState.Finished();
+            get => FinishingState!=null && FinishingState.Finished();
         }
         public string MissingStates
         {

@@ -157,7 +157,7 @@ namespace Projektni2019_BNFParser
         public override Match IsMatch(string str)
         {
             ParseResult result = StaticItems.UrlRuleset.Parse(str, true);
-            if (result.XmlRootElement == null)
+            if (result.FinishingState==null || result.XmlRootElement == null)
                 return Match.Empty;
             int length = result.MatchLength;
             return expr.Match(str.Substring(0, length));
